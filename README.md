@@ -2,7 +2,7 @@
 NeoNotifyTokyo is a daemon that notifies you when Neotokyo gets some player activity
 
 ## Dependencies
-* [cpr](https://github.com/whoshuu/cpr) - As a git submodule
+Minimal dependencies needed, only libcurl to download and libnotify to notify.
 * [libcurl](https://curl.haxx.se/libcurl/)
 * [libnotify](https://developer.gnome.org/libnotify/)
 
