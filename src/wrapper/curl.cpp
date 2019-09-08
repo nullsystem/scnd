@@ -43,3 +43,8 @@ std::string wrapper::curl::getHttpData()
   return *this->httpData.get();
 }
 
+void wrapper::curl::clearHttpData()
+{
+  this->httpData->clear();
+}
+

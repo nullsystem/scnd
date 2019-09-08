@@ -23,6 +23,7 @@ namespace wrapper
     void perform();
     int getHttpResponseCode();
     std::string getHttpData();
+    void clearHttpData();
   };
 }
 
