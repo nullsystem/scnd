@@ -20,3 +20,8 @@ void wrapper::notify::show()
 {
   notify_notification_show(this->notification, nullptr);
 }
+
+void wrapper::notify::setTimeout(unsigned int timeout)
+{
+  notify_notification_set_timeout(this->notification, timeout);
+}
