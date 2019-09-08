@@ -15,6 +15,7 @@ namespace wrapper
     ~notify();
     void static init();
     void show();
+    void setTimeout(unsigned int timeout);
   };
 }
 
