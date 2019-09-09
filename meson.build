@@ -15,7 +15,10 @@ src = [
     './src/main.cpp'
   , './src/wrapper/curl.cpp'
   , './src/wrapper/notify.cpp'
+  , './src/tool/args.cpp'
   , './src/tool/getPlayerCount.cpp'
+  , './src/tool/homeDirectory.cpp'
+  , './src/core/params.cpp'
 ]
 
 executable('neonotifytokyo'
