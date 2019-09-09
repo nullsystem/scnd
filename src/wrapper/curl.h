@@ -18,11 +18,20 @@ namespace wrapper
     std::unique_ptr<std::string> httpData;
 
   public:
-    curl(std::string_view newUrl, int timeout = 10);
+    curl();
     ~curl();
+
     void perform();
+
+    // Setters
+    void setUrl(std::string_view newUrl);
+    void setTimeout(int timeout = 10);
+
+    // Getters
     int getHttpResponseCode();
     std::string getHttpData();
+
+    // Removers
     void clearHttpData();
   };
 }
