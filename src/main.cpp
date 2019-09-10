@@ -1,5 +1,5 @@
 /* 
- * steamcounternotify
+ * steamcountsnotifyd
  *
  * Steam counter notiifcation daemon
  * version Pre-Alpha 2019-09-10
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
       if (currentCount >= config.getThreshold())
       {
         notify = true;
-        messageTitle = "NEOTOKYO";
+        messageTitle = "Steam counts";
         messageDetails = "Player counts: "+std::to_string(currentCount);
       }
     }

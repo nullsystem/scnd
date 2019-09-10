@@ -1,5 +1,5 @@
-# neonotifytokyo
-NeoNotifyTokyo is a daemon that notifies you when Neotokyo gets some player activity
+# steamcountsnotifyd
+SteamCountsNotifyD is a daemon that notifies you when your selected games gets some player activity
 
 ## Dependencies
 Minimal dependencies needed, only libcurl to download and libnotify to notify.
@@ -15,7 +15,7 @@ Minimal dependencies needed, only libcurl to download and libnotify to notify.
 
 ## Instructions
 ### Compile
-* `cd neonotifytokyo`
+* `cd steamcountsnotifyd`
 * `meson build && cd build`
 * `ninja`
 ### Install
