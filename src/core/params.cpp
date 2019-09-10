@@ -1,16 +1,70 @@
 #include "core/params.h"
 
 #include "core/help.h"
+#include "tool/homeDirectory.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <filesystem>
+#include <iomanip>
+#include <unordered_map>
+
+// Reads configuration file
+void param::config::readConfigurationFile(const std::string &confFilePath)
+{
+  std::unordered_map<std::string, unsigned int *> strMapToVal;
+  strMapToVal["interval"] = &this->intervalMins;
+  strMapToVal["thresholdinterval"] = &this->thresholdIntervalMins;
+  strMapToVal["connectiontimeout"] = &this->connectionTimeout;
+  strMapToVal["notificationtimeout"] = &this->notificationTimeout;
+
+  std::ifstream confFile(confFilePath);
+  std::string line;
+
+  while (std::getline(confFile, line))
+  {
+    std::istringstream iss(line);
+    std::string parameter;
+    appidName_s valAN;
+    int val;
+
+    iss >> parameter;
+    if (parameter == "newappid")
+    {
+      iss >> valAN.appid >> std::quoted(valAN.name) >> valAN.threshold;
+      this->appidName.emplace_back(valAN);
+    }
+    else
+    {
+      iss >> val;
+      *strMapToVal[parameter] = static_cast<unsigned int>(val);
+    }
+  }
+
+  confFile.close();
+}
 
 param::config::config()
 {
+  // Set default parameters
   this->intervalMins = 1;
+  this->thresholdIntervalMins = 2;
   this->connectionTimeout = 10;
   this->notificationTimeout = 10;
-  this->appid = 244630;
-  this->threshold = 0;
+  this->appidName = {
+      {244630, "NEOTOKYO", 0}
+    , {282440, "Quake Live", 100}
+  };
+  this->appid = 244630;   // LEGACY
+  this->threshold = 0;    // LEGACY
+
+  // Read configuration file
+  const std::string &confFilePath = tool::getHomeDirectory()+"/.config/steamcountsnotifyd/config";
+
+  if (std::filesystem::exists(confFilePath))
+  {
+    this->readConfigurationFile(confFilePath);
+  }
 }
 
 param::config::~config()

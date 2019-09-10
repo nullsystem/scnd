@@ -1,0 +1,7 @@
+interval 1
+thresholdinterval 2
+connectiontimeout 10
+notifytimeout 10
+
+newappid 244630 "NEOTOKYO" 0
+newappid 282440 "Quake Live" 100
