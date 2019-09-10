@@ -1,6 +1,7 @@
-project('neonotifytokyo'
+project('steamcountsnotifyd'
   , 'cpp'
   , default_options : ['warning_level=3', 'cpp_std=c++17', 'optimization=3', 'werror=false']
+  , version : 'PRE-ALPHA 20190910'
 )
 
 add_project_arguments(['-lstdc++fs'], language : 'cpp')
@@ -19,10 +20,9 @@ src = [
   , './src/tool/homeDirectory.cpp'
   , './src/wrapper/curl.cpp'
   , './src/wrapper/notify.cpp'
-
 ]
 
-executable('neonotifytokyo'
+executable('steamcountsnotifyd'
            , sources : src
            , dependencies : [libcurl_dep, libnotify_dep]
            , include_directories : [src_inc, local_inc]
