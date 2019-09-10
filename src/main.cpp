@@ -1,7 +1,9 @@
-/*
+/* 
+ * steamcounternotify
  *
+ * Steam counter notiifcation daemon
+ * version Pre-Alpha 2019-09-10
  */
-// https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=244630
 
 #include <iostream>
 #include <chrono>
@@ -12,7 +14,6 @@
 #include "wrapper/notify.h"
 #include "tool/getPlayerCount.h"
 #include "tool/args.h"
-#include "core/help.h"
 #include "core/params.h"
 
 int main(int argc, char **argv)
@@ -21,37 +22,17 @@ int main(int argc, char **argv)
   args.pop_front();     // Program execution name not needed
   
   param::config config;
-
   unsigned int  currentCount = 0;
-  bool          running  = false;
+  bool          running  = true;
   bool          notify   = false;
   std::string   messageTitle;
   std::string   messageDetails;
   wrapper::curl curlJob;
 
-  while (args.size() > 0)
-  {
-    if (args.front() == "-h")
-    {
-      std::cout << HELP;
-    }
-    else if (args.front() == "-v")
-    {
-      std::cout << VERSION;
-    }
-    else
-    {
-      std::cerr << "ERROR: Parameter '" << args.front() << "' not found.\n";
-    }
-
-    // Discard front string
-    args.pop_front();
-  }
+  running = config.setFromArgs(args);
 
   curlJob.setUrl("https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid="+std::to_string(config.getAppid()));
   curlJob.setTimeout(config.getConnectionTimeout());
-
-  running = true;
 
   while (running)
   {
