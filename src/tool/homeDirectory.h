@@ -1,5 +1,5 @@
-#ifndef TOOLS__HOMEDIRECTORY_H
-#define TOOLS__HOMEDIRECTORY_H
+#ifndef TOOL__HOMEDIRECTORY_H
+#define TOOL__HOMEDIRECTORY_H
 
 #include <string>
 
