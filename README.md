@@ -18,7 +18,6 @@ Minimal dependencies needed:
 ### C++ Requirements
 * C++11 for std::thread
 * C++11 for std::function
-* C++11 for lambda expressions
 * C++17 for std::filesystem
 * C++17 for cleaner for loop over std::pair
 

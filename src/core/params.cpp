@@ -15,44 +15,46 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
 {
   std::unordered_map<std::string, unsigned int> strMapToVal;
   // Set default parameters
-  strMapToVal["interval"] = 1;
-  strMapToVal["thresholdinterval"] = 2;
-  strMapToVal["connectiontimeout"] = 10;
-  strMapToVal["notificationtimeout"] = 10;
-  this->appidMap[244630] = {"NEOTOKYO", 0};
-  this->appidMap[282440] = {"Quake Live", 100};
+  strMapToVal["interval"] = 1;                    // Minutes
+  strMapToVal["thresholdinterval"] = 2;           // Minutes
+  strMapToVal["connectiontimeout"] = 10;          // Seconds
+  strMapToVal["notificationtimeout"] = 10;        // Seconds
 
-  // Configuration file stream
-  std::ifstream confFile(confFilePath);
-
-  for (std::string line; std::getline(confFile, line); )
+  // Go over the configuration file
+  if (std::filesystem::exists(confFilePath))
   {
-    std::istringstream iss(line);
-    std::string parameter;
-    appidName_s valAN;
-    int val;
+    // Configuration file stream
+    std::ifstream confFile(confFilePath);
 
-    iss >> parameter;
-    if (parameter == "newappid")
+    for (std::string line; std::getline(confFile, line); )
     {
-      iss >> val >> std::quoted(valAN.name) >> valAN.threshold;
-      this->appidMap[val] = valAN;
-    }
-    else
-    {
-      iss >> val;
-      if (val >= 0)
+      std::istringstream iss(line);
+      std::string parameter;
+      appidName_s valAN;
+      int val;
+
+      iss >> parameter;
+      if (parameter == "newappid")
       {
-        strMapToVal[parameter] = static_cast<unsigned int>(val);
+        iss >> val >> std::quoted(valAN.name) >> valAN.threshold;
+        this->appidMap[val] = valAN;
       }
       else
       {
-        std::cerr << "ERROR: Value for '" << parameter << "' cannot be less than 0.\n";
+        iss >> val;
+        if (val >= 0)
+        {
+          strMapToVal[parameter] = static_cast<unsigned int>(val);
+        }
+        else
+        {
+          std::cerr << "ERROR: Value for '" << parameter << "' cannot be less than 0.\n";
+        }
       }
     }
-  }
 
-  confFile.close();
+    confFile.close();
+  }
 
   this->intervalMins = strMapToVal["interval"];
   this->thresholdIntervalMins = strMapToVal["thresholdinterval"];
@@ -63,19 +65,7 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
 param::config::config()
 {
   // Read configuration file
-  const std::string &confFilePath = tool::getHomeDirectory()+"/.config/steamcountsnotifyd/config";
-
-  if (std::filesystem::exists(confFilePath))
-  {
-    this->readConfigurationFile(confFilePath);
-  }
-
-  /* VERBOSE
-  for (auto &an : this->appidMap)
-  {
-    std::cout << an.first << ' ' << an.second.name << ' ' << an.second.threshold << '\n';
-  }
-  */
+  this->readConfigurationFile(tool::getHomeDirectory()+"/.config/steamcountsnotifyd/config");
 }
 
 param::config::~config()
