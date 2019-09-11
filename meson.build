@@ -1,7 +1,7 @@
 project('steamcountsnotifyd'
   , 'cpp'
   , default_options : ['warning_level=3', 'cpp_std=c++17', 'optimization=3', 'werror=false']
-  , version : 'PRE-ALPHA 20190911'
+  , version : '0.0.1'
 )
 
 cc = meson.get_compiler('cpp')
@@ -32,6 +32,7 @@ src = [
   , './src/tool/getPlayerCount.cpp'
   , './src/tool/homeDirectory.cpp'
   , './src/wrapper/curl.cpp'
+  , './src/wrapper/daemon.cpp'
   , './src/wrapper/notify.cpp'
 ]
 
