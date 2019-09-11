@@ -2,7 +2,11 @@
  * steamcountsnotifyd
  *
  * Steam counter notiifcation daemon
- * version Pre-Alpha 2019-09-10
+ * version Pre-Alpha 2019-09-11
+ *
+ * TODO:
+ *  Threshold interval
+ *  Daemonise
  */
 
 #include <iostream>
@@ -31,44 +35,50 @@ int main(int argc, char **argv)
 
   running = config.setFromArgs(args);
 
-  curlJob.setUrl("https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid="+std::to_string(config.getAppid()));
   curlJob.setTimeout(config.getConnectionTimeout());
 
+  // Running state
   while (running)
   {
-    // Perform the job
-    curlJob.perform();
-
-    // Determine message
-    if (curlJob.getHttpResponseCode() == 200)
+    // Loop through list
+    for (const auto &[appid, game] : config.getAppidMap())
     {
-      currentCount = tool::getPlayerCount(curlJob.getHttpData());
-      if (currentCount >= config.getThreshold())
+      curlJob.setUrl("https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid="+std::to_string(appid));
+
+      // Perform the job
+      curlJob.perform();
+
+      // Determine message
+      if (curlJob.getHttpResponseCode() == 200)
       {
-        notify = true;
-        messageTitle = "Steam counts";
-        messageDetails = "Player counts: "+std::to_string(currentCount);
+        currentCount = tool::getPlayerCount(curlJob.getHttpData());
+        if (currentCount >= game.threshold)
+        {
+          notify = true;
+          messageTitle = game.name;
+          messageDetails = "Player counts: "+std::to_string(currentCount);
+        }
+      }
+      else
+      {
+        messageTitle = "ERROR";
+        messageDetails = "Cannot fetch player numbers - no internet connection or steam API is down.";
+      }
+
+      // Clear data
+      curlJob.clearHttpData();
+
+      // Notify
+      if (notify)
+      {
+        wrapper::notify::init();
+        wrapper::notify notifyJob(messageTitle, messageDetails);
+        notifyJob.setTimeout(config.getNotificationTimeout());
+        notifyJob.show();
+
+        notify = false;
       }
     }
-    else
-    {
-      messageTitle = "ERROR";
-      messageDetails = "Cannot fetch player numbers - no internet connection or steam API is down.";
-    }
-
-    // Notify
-    if (notify)
-    {
-      wrapper::notify::init();
-      wrapper::notify notifyJob(messageTitle, messageDetails);
-      notifyJob.setTimeout(config.getNotificationTimeout());
-      notifyJob.show();
-
-      notify = false;
-    }
-
-    // Clear data
-    curlJob.clearHttpData();
 
     // Delay
     std::this_thread::sleep_for(std::chrono::minutes(config.getIntervalMins()));

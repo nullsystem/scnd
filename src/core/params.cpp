@@ -2,6 +2,7 @@
 
 #include "core/help.h"
 #include "tool/homeDirectory.h"
+#include <string>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -12,16 +13,19 @@
 // Reads configuration file
 void param::config::readConfigurationFile(const std::string &confFilePath)
 {
-  std::unordered_map<std::string, unsigned int *> strMapToVal;
-  strMapToVal["interval"] = &this->intervalMins;
-  strMapToVal["thresholdinterval"] = &this->thresholdIntervalMins;
-  strMapToVal["connectiontimeout"] = &this->connectionTimeout;
-  strMapToVal["notificationtimeout"] = &this->notificationTimeout;
+  std::unordered_map<std::string, unsigned int> strMapToVal;
+  // Set default parameters
+  strMapToVal["interval"] = 1;
+  strMapToVal["thresholdinterval"] = 2;
+  strMapToVal["connectiontimeout"] = 10;
+  strMapToVal["notificationtimeout"] = 10;
+  this->appidMap[244630] = {"NEOTOKYO", 0};
+  this->appidMap[282440] = {"Quake Live", 100};
 
+  // Configuration file stream
   std::ifstream confFile(confFilePath);
-  std::string line;
 
-  while (std::getline(confFile, line))
+  for (std::string line; std::getline(confFile, line); )
   {
     std::istringstream iss(line);
     std::string parameter;
@@ -31,33 +35,33 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
     iss >> parameter;
     if (parameter == "newappid")
     {
-      iss >> valAN.appid >> std::quoted(valAN.name) >> valAN.threshold;
-      this->appidName.emplace_back(valAN);
+      iss >> val >> std::quoted(valAN.name) >> valAN.threshold;
+      this->appidMap[val] = valAN;
     }
     else
     {
       iss >> val;
-      *strMapToVal[parameter] = static_cast<unsigned int>(val);
+      if (val >= 0)
+      {
+        strMapToVal[parameter] = static_cast<unsigned int>(val);
+      }
+      else
+      {
+        std::cerr << "ERROR: Value for '" << parameter << "' cannot be less than 0.\n";
+      }
     }
   }
 
   confFile.close();
+
+  this->intervalMins = strMapToVal["interval"];
+  this->thresholdIntervalMins = strMapToVal["thresholdinterval"];
+  this->connectionTimeout = strMapToVal["connectiontimeout"];
+  this->notificationTimeout = strMapToVal["notificationtimeout"];
 }
 
 param::config::config()
 {
-  // Set default parameters
-  this->intervalMins = 1;
-  this->thresholdIntervalMins = 2;
-  this->connectionTimeout = 10;
-  this->notificationTimeout = 10;
-  this->appidName = {
-      {244630, "NEOTOKYO", 0}
-    , {282440, "Quake Live", 100}
-  };
-  this->appid = 244630;   // LEGACY
-  this->threshold = 0;    // LEGACY
-
   // Read configuration file
   const std::string &confFilePath = tool::getHomeDirectory()+"/.config/steamcountsnotifyd/config";
 
@@ -65,6 +69,13 @@ param::config::config()
   {
     this->readConfigurationFile(confFilePath);
   }
+
+  /* VERBOSE
+  for (auto &an : this->appidMap)
+  {
+    std::cout << an.first << ' ' << an.second.name << ' ' << an.second.threshold << '\n';
+  }
+  */
 }
 
 param::config::~config()
@@ -86,14 +97,9 @@ unsigned int param::config::getNotificationTimeout()
   return this->notificationTimeout;
 }
 
-unsigned int param::config::getAppid()
+param::appidNameMap param::config::getAppidMap()
 {
-  return this->appid;
-}
-
-unsigned int param::config::getThreshold()
-{
-  return this->threshold;
+  return this->appidMap;
 }
 
 bool param::config::setArg(std::string &arg)
@@ -125,10 +131,13 @@ bool param::config::setArg(std::string &arg)
       this->intervalMins = val;
       break;
     case 't':
-      this->threshold = val;
+      this->thresholdIntervalMins = val;
       break;
-    case 'a':
-      this->appid = val;
+    case 'c':
+      this->connectionTimeout = val;
+      break;
+    case 'n':
+      this->notificationTimeout = val;
       break;
     default:
       std::cerr << "ERROR: '" << arg[1] << "' not found.\n";

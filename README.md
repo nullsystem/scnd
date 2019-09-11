@@ -1,6 +1,9 @@
 # steamcountsnotifyd
 SteamCountsNotifyD is a daemon that notifies you when your selected games gets some player activity
 
+## License
+SteamCountsNotifyD is released under a free software license (MIT)
+
 ## Dependencies
 Minimal dependencies needed, only libcurl to download and libnotify to notify.
 * [libcurl](https://curl.haxx.se/libcurl/)
