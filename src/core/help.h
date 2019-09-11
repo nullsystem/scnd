@@ -16,6 +16,6 @@
   "steamcountsnotifyd\n"\
   "The Steam player count notification daemon\n"\
   "\n"\
-  "Version Pre-Alpha 2019-09-08\n"
+  "0.0.1 - Alpha Release\n"
 
 #endif

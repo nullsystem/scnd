@@ -5,7 +5,8 @@ namespace wrapper
 {
   namespace daemon
   {
-
+    void init();
+    void uninit();
   }
 }
 

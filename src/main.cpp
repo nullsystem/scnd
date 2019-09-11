@@ -35,6 +35,8 @@ int main(int argc, char **argv)
   // If help or version message not used (normal execution)
   if (running)
   {
+    wrapper::daemon::init();
+
     //std::function<void(unsigned int, param::appidName_s, const param::config &)> thread::appidRunning;
     wrapper::notify::init("steamcountsnotifyd");
 
@@ -56,6 +58,7 @@ int main(int argc, char **argv)
     }
 
     wrapper::notify::uninit();
+    wrapper::daemon::uninit();
   }
 
   return 0;

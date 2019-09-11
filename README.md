@@ -49,3 +49,8 @@ newappid 244630 "NEOTOKYO" 0
 newappid 282440 "Quake Live" 100
 ```
 
+## Releases
+### 0.0.1 Alpha release
+* First release
+* Basic daemon implementation implemented
+
