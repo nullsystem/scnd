@@ -30,11 +30,11 @@ namespace param
   public:
     config();
     ~config();
-    unsigned int getIntervalMins();
-    unsigned int getThresholdIntervalMins();
-    unsigned int getConnectionTimeout();
-    unsigned int getNotificationTimeout();
-    appidNameMap getAppidMap();
+    unsigned int getIntervalMins() const;
+    unsigned int getThresholdIntervalMins() const;
+    unsigned int getConnectionTimeout() const;
+    unsigned int getNotificationTimeout() const;
+    appidNameMap getAppidMap() const;
     bool         setFromArgs(std::deque<std::string> &args);
   };
 }
