@@ -6,6 +6,7 @@
  *
  * TODO:
  *  Threshold interval
+ *  Threadding
  *  Daemonise
  */
 
@@ -13,6 +14,8 @@
 #include <chrono>
 #include <thread>
 #include <deque>
+#include <vector>
+#include <functional>
 
 #include "wrapper/curl.h"
 #include "wrapper/notify.h"
@@ -24,24 +27,23 @@ int main(int argc, char **argv)
 {
   std::deque<std::string> args = tool::toArgs(argc, argv);
   args.pop_front();     // Program execution name not needed
-  
   param::config config;
-  unsigned int  currentCount = 0;
-  bool          running  = true;
-  bool          notify   = false;
-  std::string   messageTitle;
-  std::string   messageDetails;
-  wrapper::curl curlJob;
+  bool          running = config.setFromArgs(args);
 
-  running = config.setFromArgs(args);
-
-  curlJob.setTimeout(config.getConnectionTimeout());
-
-  // Running state
-  while (running)
+  // Functional lambda
+  std::function<void(unsigned int, param::appidName_s, const param::config &)> appidRunningThread = [](unsigned int appid, param::appidName_s game, const param::config &config)
   {
-    // Loop through list
-    for (const auto &[appid, game] : config.getAppidMap())
+    unsigned int  currentCount = 0;
+    bool          notify   = false;
+    bool          running  = true;
+    std::string   messageTitle;
+    std::string   messageDetails;
+    wrapper::curl curlJob;
+    unsigned int  currentThreadInterval = config.getIntervalMins();
+
+    curlJob.setTimeout(config.getConnectionTimeout());
+
+    while (running)
     {
       curlJob.setUrl("https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid="+std::to_string(appid));
 
@@ -78,10 +80,31 @@ int main(int argc, char **argv)
 
         notify = false;
       }
+
+      // Delay
+      std::this_thread::sleep_for(std::chrono::minutes(currentThreadInterval));
+    }
+  };
+
+  // If help or version message not used (normal execution)
+  if (running)
+  {
+    // Initialise and run threads for each appid/game 
+    std::vector<std::thread> appidThreadVector;
+
+    for (const auto &[appid, game] : config.getAppidMap())
+    {
+      appidThreadVector.emplace_back(std::thread(appidRunningThread, appid, game, config));
     }
 
-    // Delay
-    std::this_thread::sleep_for(std::chrono::minutes(config.getIntervalMins()));
+    // Join thread if joinable
+    for (std::thread &thread : appidThreadVector)
+    {
+      if (thread.joinable())
+      {
+        thread.join();
+      }
+    }
   }
 
   return 0;
