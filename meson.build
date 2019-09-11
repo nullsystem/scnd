@@ -4,13 +4,25 @@ project('steamcountsnotifyd'
   , version : 'PRE-ALPHA 20190910'
 )
 
-add_project_arguments(['-lstdc++fs'], language : 'cpp')
+cc = meson.get_compiler('cpp')
+
+# C++17 filesystem arguments
+if cc.get_id() == 'gcc'
+  message('Compiler: GCC')
+  add_project_arguments(['-lstdc++fs'], language : 'cpp')
+  add_project_link_arguments(['-lstdc++fs'], language : 'cpp')
+elif cc.get_id() == 'clang'
+  message('Compiler: LLVM/clang')
+  add_project_arguments(['-stdlib=libc++'], language : 'cpp')
+  add_project_link_arguments(['-stdlib=libc++','-lstdc++fs'], language : 'cpp')
+endif
 
 src_inc = include_directories('./src/')
-local_inc = include_directories('/usr/local/include/')
 
-libcurl_dep = dependency('libcurl', required : true)
-libnotify_dep = dependency('libnotify', required : true)
+# Dependencies
+thread_dep = dependency('threads')                        # C++11 threads
+libcurl_dep = dependency('libcurl', required : true)      # libcurl
+libnotify_dep = dependency('libnotify', required : true)  # libnotify
 
 src = [
     './src/main.cpp'
@@ -24,8 +36,9 @@ src = [
 
 executable('steamcountsnotifyd'
            , sources : src
-           , dependencies : [libcurl_dep, libnotify_dep]
-           , include_directories : [src_inc, local_inc]
+           , dependencies : [thread_dep, libcurl_dep, libnotify_dep]
+           , include_directories : [src_inc]
+           , install : true
 )
 
 

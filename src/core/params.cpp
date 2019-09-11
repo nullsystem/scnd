@@ -82,22 +82,27 @@ param::config::~config()
 {
 }
 
-unsigned int param::config::getIntervalMins()
+unsigned int param::config::getIntervalMins() const
 {
   return this->intervalMins;
 }
 
-unsigned int param::config::getConnectionTimeout()
+unsigned int param::config::getThresholdIntervalMins() const
+{
+  return this->thresholdIntervalMins;
+}
+
+unsigned int param::config::getConnectionTimeout() const
 {
   return this->connectionTimeout;
 }
 
-unsigned int param::config::getNotificationTimeout()
+unsigned int param::config::getNotificationTimeout() const
 {
   return this->notificationTimeout;
 }
 
-param::appidNameMap param::config::getAppidMap()
+param::appidNameMap param::config::getAppidMap() const
 {
   return this->appidMap;
 }
