@@ -7,13 +7,16 @@ wrapper::notify::notify(std::string_view summary, std::string_view body, std::st
 
 wrapper::notify::~notify()
 {
-  g_object_unref(G_OBJECT(this->notification));
-  notify_uninit();
 }
 
-void wrapper::notify::init()
+void wrapper::notify::init(std::string_view threadName)
 {
-  notify_init("neonotifytokyo");
+  notify_init(threadName.data());
+}
+
+void wrapper::notify::uninit()
+{
+  notify_uninit();
 }
 
 void wrapper::notify::show()
@@ -24,4 +27,9 @@ void wrapper::notify::show()
 void wrapper::notify::setTimeout(unsigned int timeout)
 {
   notify_notification_set_timeout(this->notification, timeout);
+}
+
+void wrapper::notify::unref()
+{
+  g_object_unref(G_OBJECT(this->notification));
 }

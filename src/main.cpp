@@ -5,24 +5,26 @@
  * version Pre-Alpha 2019-09-11
  *
  * TODO:
- *  Threshold interval
- *  Threadding
  *  Daemonise
  */
 
 #include <iostream>
-#include <chrono>
 #include <thread>
 #include <deque>
 #include <vector>
 #include <functional>
 
-#include "wrapper/curl.h"
-#include "wrapper/notify.h"
-#include "tool/getPlayerCount.h"
-#include "tool/args.h"
+#include "core/counterThread.h"
 #include "core/params.h"
+#include "tool/args.h"
+#include "tool/getPlayerCount.h"
+#include "wrapper/curl.h"
+#include "wrapper/daemon.h"
+#include "wrapper/notify.h"
 
+/* 
+ * Main function of steamcountsnotifyd
+ */
 int main(int argc, char **argv)
 {
   std::deque<std::string> args = tool::toArgs(argc, argv);
@@ -30,71 +32,18 @@ int main(int argc, char **argv)
   param::config config;
   bool          running = config.setFromArgs(args);
 
-  // Functional lambda
-  std::function<void(unsigned int, param::appidName_s, const param::config &)> appidRunningThread = [](unsigned int appid, param::appidName_s game, const param::config &config)
-  {
-    unsigned int  currentCount = 0;
-    bool          notify   = false;
-    bool          running  = true;
-    std::string   messageTitle;
-    std::string   messageDetails;
-    wrapper::curl curlJob;
-    unsigned int  currentThreadInterval = config.getIntervalMins();
-
-    curlJob.setTimeout(config.getConnectionTimeout());
-
-    while (running)
-    {
-      curlJob.setUrl("https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid="+std::to_string(appid));
-
-      // Perform the job
-      curlJob.perform();
-
-      // Determine message
-      if (curlJob.getHttpResponseCode() == 200)
-      {
-        currentCount = tool::getPlayerCount(curlJob.getHttpData());
-        if (currentCount >= game.threshold)
-        {
-          notify = true;
-          messageTitle = game.name;
-          messageDetails = "Player counts: "+std::to_string(currentCount);
-        }
-      }
-      else
-      {
-        messageTitle = "ERROR";
-        messageDetails = "Cannot fetch player numbers - no internet connection or steam API is down.";
-      }
-
-      // Clear data
-      curlJob.clearHttpData();
-
-      // Notify
-      if (notify)
-      {
-        wrapper::notify::init();
-        wrapper::notify notifyJob(messageTitle, messageDetails);
-        notifyJob.setTimeout(config.getNotificationTimeout());
-        notifyJob.show();
-
-        notify = false;
-      }
-
-      // Delay
-      std::this_thread::sleep_for(std::chrono::minutes(currentThreadInterval));
-    }
-  };
-
   // If help or version message not used (normal execution)
   if (running)
   {
+    //std::function<void(unsigned int, param::appidName_s, const param::config &)> thread::appidRunning;
+    wrapper::notify::init("steamcountsnotifyd");
+
     // Initialise and run threads for each appid/game 
     std::vector<std::thread> appidThreadVector;
 
     for (const auto &[appid, game] : config.getAppidMap())
     {
-      appidThreadVector.emplace_back(std::thread(appidRunningThread, appid, game, config));
+      appidThreadVector.emplace_back(std::thread(std::function(cthread::appidRunning), appid, game, config));
     }
 
     // Join thread if joinable
@@ -105,6 +54,8 @@ int main(int argc, char **argv)
         thread.join();
       }
     }
+
+    wrapper::notify::uninit();
   }
 
   return 0;

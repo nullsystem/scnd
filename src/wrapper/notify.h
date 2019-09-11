@@ -13,9 +13,11 @@ namespace wrapper
   public:
     notify(std::string_view summary, std::string_view body, std::string_view icon = "dialog-information");
     ~notify();
-    void static init();
+    void static init(std::string_view threadName);
+    void static uninit();
     void show();
     void setTimeout(unsigned int timeout);
+    void unref();
   };
 }
 

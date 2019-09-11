@@ -1,7 +1,7 @@
 project('steamcountsnotifyd'
   , 'cpp'
   , default_options : ['warning_level=3', 'cpp_std=c++17', 'optimization=3', 'werror=false']
-  , version : 'PRE-ALPHA 20190910'
+  , version : 'PRE-ALPHA 20190911'
 )
 
 cc = meson.get_compiler('cpp')
@@ -27,6 +27,7 @@ libnotify_dep = dependency('libnotify', required : true)  # libnotify
 src = [
     './src/main.cpp'
   , './src/core/params.cpp'
+  , './src/core/counterThread.cpp'
   , './src/tool/args.cpp'
   , './src/tool/getPlayerCount.cpp'
   , './src/tool/homeDirectory.cpp'
