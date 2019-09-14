@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 #include <syslog.h>
 
+#include "tool/homeDirectory.h"
+
 void signal_handler(int sig)
 {
   switch (sig)
@@ -78,10 +80,18 @@ void wrapper::daemon::init()
 
   // Open logging
   openlog("steamcountsnotifyd", LOG_PID, LOG_DAEMON);
+
+  const std::string homeDirLog = "Home directory: " + tool::getHomeDirectory();
+  syslog(LOG_NOTICE, homeDirLog.c_str());
 }
 
 void wrapper::daemon::uninit()
 {
   closelog();
+}
+
+void wrapper::daemon::log(const std::string &str)
+{
+  syslog(LOG_NOTICE, str.c_str());
 }
 
