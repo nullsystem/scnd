@@ -2,6 +2,8 @@
 
 #include "core/help.h"
 #include "tool/homeDirectory.h"
+#include "wrapper/daemon.h"
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -19,10 +21,15 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
   strMapToVal["thresholdinterval"] = 2;           // Minutes
   strMapToVal["connectiontimeout"] = 10;          // Seconds
   strMapToVal["notificationtimeout"] = 10;        // Seconds
+  this->daemonize = true;
+
+  wrapper::daemon::log(confFilePath);
 
   // Go over the configuration file
   if (std::filesystem::exists(confFilePath))
   {
+    wrapper::daemon::log("Found configuration file.");
+
     // Configuration file stream
     std::ifstream confFile(confFilePath);
 
@@ -32,12 +39,18 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
       std::string parameter;
       appidName_s valAN;
       int val;
+      std::string valStr;
 
       iss >> parameter;
       if (parameter == "newappid")
       {
         iss >> val >> std::quoted(valAN.name) >> valAN.threshold;
         this->appidMap[val] = valAN;
+      }
+      else if (parameter == "daemonize")
+      {
+        iss >> valStr;
+        this->daemonize = (valStr == "false") ? false : true;
       }
       else
       {
@@ -55,11 +68,16 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
 
     confFile.close();
   }
+  else
+  {
+    wrapper::daemon::log("Cannot find configuration file.");
+  }
 
   this->intervalMins = strMapToVal["interval"];
   this->thresholdIntervalMins = strMapToVal["thresholdinterval"];
   this->connectionTimeout = strMapToVal["connectiontimeout"];
   this->notificationTimeout = strMapToVal["notificationtimeout"];
+  this->daemonize = true;
 }
 
 param::config::config()
@@ -70,6 +88,11 @@ param::config::config()
 
 param::config::~config()
 {
+}
+
+bool param::config::getDaemonize() const
+{
+  return this->daemonize;
 }
 
 unsigned int param::config::getIntervalMins() const
@@ -99,7 +122,7 @@ param::appidNameMap param::config::getAppidMap() const
 
 bool param::config::setArg(std::string &arg)
 {
-  if (arg.size() <= 4)
+  if (arg.size() < 4)
   {
     std::cerr << "ERROR: Invalid parameter setting '" << arg << "'.\n";
     return false;
@@ -122,6 +145,9 @@ bool param::config::setArg(std::string &arg)
 
     switch (arg[1])
     {
+    case 'd':
+      this->daemonize = static_cast<bool>(val);
+      break;
     case 'i':
       this->intervalMins = val;
       break;
@@ -160,13 +186,8 @@ bool param::config::setFromArgs(std::deque<std::string> &args)
       case 'v':
         std::cout << VERSION;
         return false;
-      case 'i':
-      case 't':
-      case 'a':
-        this->setArg(argf);
-        break;
       default:
-        std::cerr << "ERROR: '" << argf[1] << "' not found.\n";
+        this->setArg(argf);
       }
     }
     else

@@ -5,7 +5,9 @@
  * version Pre-Alpha 2019-09-11
  *
  * TODO:
- *  Daemonise
+ *  Per-server notification
+ *  Click to load game
+ *  Non-daemon mode
  */
 
 #include <iostream>
@@ -35,9 +37,11 @@ int main(int argc, char **argv)
   // If help or version message not used (normal execution)
   if (running)
   {
-    wrapper::daemon::init();
-
-    //std::function<void(unsigned int, param::appidName_s, const param::config &)> thread::appidRunning;
+    // Initialise daemon and notification
+    if (config.getDaemonize())
+    {
+      wrapper::daemon::init();
+    }
     wrapper::notify::init("steamcountsnotifyd");
 
     // Initialise and run threads for each appid/game 
@@ -57,8 +61,13 @@ int main(int argc, char **argv)
       }
     }
 
+    // Uninitialise/destroy daemon and notification
     wrapper::notify::uninit();
-    wrapper::daemon::uninit();
+
+    if (config.getDaemonize())
+    {
+      wrapper::daemon::uninit();
+    }
   }
 
   return 0;
