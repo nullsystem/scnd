@@ -1,0 +1,10 @@
+[Unit]
+Description=Steam Counts Notification Daemon
+
+[Service]
+Type=forking
+ExecStart=/usr/local/sbin/steamcountsnotifyd
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

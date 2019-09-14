@@ -35,7 +35,7 @@ void cthread::appidRunning(unsigned int appid, param::appidName_s game, const pa
       {
         notify = true;
         messageTitle = game.name;
-        messageDetails = "Player counts: "+std::to_string(currentCount);
+        messageDetails = "Player count: "+std::to_string(currentCount);
         currentThreadInterval = config.getThresholdIntervalMins();
       }
       // Otherwise reset to the desired under threshold interval
@@ -64,7 +64,7 @@ void cthread::appidRunning(unsigned int appid, param::appidName_s game, const pa
 
       notify = false;
     }
-
+    
     // Delay
     std::this_thread::sleep_for(std::chrono::minutes(currentThreadInterval));
   }

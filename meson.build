@@ -1,6 +1,6 @@
 project('steamcountsnotifyd'
   , 'cpp'
-  , default_options : ['warning_level=3', 'cpp_std=c++17', 'optimization=3', 'werror=false']
+  , default_options : ['warning_level=3', 'cpp_std=c++17', 'optimization=3', 'werror=false', 'debug=true']
   , version : '0.0.1'
 )
 
@@ -20,9 +20,10 @@ endif
 src_inc = include_directories('./src/')
 
 # Dependencies
-thread_dep = dependency('threads')                        # C++11 threads
+thread_dep = dependency('threads', required : true)       # C++11 threads
 libcurl_dep = dependency('libcurl', required : true)      # libcurl
 libnotify_dep = dependency('libnotify', required : true)  # libnotify
+systemd_dep = dependency('systemd', required : false)     # systemd
 
 src = [
     './src/main.cpp'
@@ -36,11 +37,18 @@ src = [
   , './src/wrapper/notify.cpp'
 ]
 
+# Install systemd service configuration
+if systemd_dep.found()
+  message('systemd found, service will be installed if wanted')
+  install_data('./config/steamcountsnotifyd.service', install_dir : '/usr/lib/systemd/user/')
+endif
+
 executable('steamcountsnotifyd'
            , sources : src
-           , dependencies : [thread_dep, libcurl_dep, libnotify_dep]
+           , dependencies : [thread_dep, libcurl_dep, libnotify_dep, systemd_dep]
            , include_directories : [src_inc]
            , install : true
+           , install_dir : get_option('sbindir')
 )
 
 

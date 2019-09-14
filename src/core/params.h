@@ -19,6 +19,7 @@ namespace param
   class config
   {
   private:
+    bool         daemonize;
     unsigned int intervalMins;
     unsigned int thresholdIntervalMins;
     unsigned int connectionTimeout;
@@ -30,6 +31,7 @@ namespace param
   public:
     config();
     ~config();
+    bool         getDaemonize() const;
     unsigned int getIntervalMins() const;
     unsigned int getThresholdIntervalMins() const;
     unsigned int getConnectionTimeout() const;
