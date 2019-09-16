@@ -7,7 +7,6 @@
  * TODO:
  *  Per-server notification
  *  Click to load game
- *  Non-daemon mode
  */
 
 #include <iostream>
@@ -24,9 +23,6 @@
 #include "wrapper/daemon.h"
 #include "wrapper/notify.h"
 
-/* 
- * Main function of steamcountsnotifyd
- */
 int main(int argc, char **argv)
 {
   std::deque<std::string> args = tool::toArgs(argc, argv);
