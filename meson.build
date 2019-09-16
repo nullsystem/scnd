@@ -24,6 +24,7 @@ thread_dep = dependency('threads', required : true)       # C++11 threads
 libcurl_dep = dependency('libcurl', required : true)      # libcurl
 libnotify_dep = dependency('libnotify', required : true)  # libnotify
 systemd_dep = dependency('systemd', required : false)     # systemd
+#glib_dep = dependency('glib', required : true)            # glib
 
 src = [
     './src/main.cpp'

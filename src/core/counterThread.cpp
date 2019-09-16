@@ -2,10 +2,22 @@
 
 #include <thread>
 #include <chrono>
+#include <cstdint>
+#include <iostream>
 
 #include "tool/getPlayerCount.h"
 #include "wrapper/curl.h"
 #include "wrapper/notify.h"
+
+// Called once clicked
+void gameCallback(NotifyNotification *notify, char *action, gpointer data)
+{
+  //unsigned int appid = 282440;
+  unsigned int appid = static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(data));
+  std::string command = R"steamRun(steam steam://rungameid/)steamRun"+std::to_string(appid);
+  //system(command.c_str());
+  std::cout << command << '\n';
+}
 
 void cthread::appidRunning(unsigned int appid, param::appidName_s game, const param::config &config)
 {
@@ -18,6 +30,9 @@ void cthread::appidRunning(unsigned int appid, param::appidName_s game, const pa
   unsigned int  currentThreadInterval = config.getIntervalMins();
 
   curlJob.setTimeout(config.getConnectionTimeout());
+
+  wrapper::notify notifyJob;
+  notifyJob.setTimeout(config.getNotificationTimeout());
 
   while (running)
   {
@@ -57,10 +72,8 @@ void cthread::appidRunning(unsigned int appid, param::appidName_s game, const pa
     // Notify
     if (notify)
     {
-      wrapper::notify notifyJob(messageTitle, messageDetails);
-      notifyJob.setTimeout(config.getNotificationTimeout());
+      notifyJob.update(messageTitle, messageDetails);
       notifyJob.show();
-      notifyJob.unref();
 
       notify = false;
     }
