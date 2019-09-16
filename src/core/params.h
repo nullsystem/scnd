@@ -24,6 +24,7 @@ namespace param
     unsigned int thresholdIntervalMins;
     unsigned int connectionTimeout;
     unsigned int notificationTimeout;
+    unsigned int actionType;
     appidNameMap appidMap;
     bool         setArg(std::string &arg);
     void         readConfigurationFile(const std::string &confFilePath);
@@ -36,6 +37,7 @@ namespace param
     unsigned int getThresholdIntervalMins() const;
     unsigned int getConnectionTimeout() const;
     unsigned int getNotificationTimeout() const;
+    std::string_view getActionType() const;
     appidNameMap getAppidMap() const;
     bool         setFromArgs(std::deque<std::string> &args);
   };

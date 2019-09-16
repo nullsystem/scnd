@@ -10,16 +10,15 @@
 #include "wrapper/notify.h"
 
 // Called once clicked
-void gameCallback(NotifyNotification *notify, char *action, gpointer data)
+// Requires GMainLoop
+void gameCallback(NotifyNotification * /*notify*/, char * /*action*/, gpointer data)
 {
-  //unsigned int appid = 282440;
   unsigned int appid = static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(data));
   std::string command = R"steamRun(steam steam://rungameid/)steamRun"+std::to_string(appid);
-  //system(command.c_str());
-  std::cout << command << '\n';
+  system(command.c_str());
 }
 
-void cthread::appidRunning(unsigned int appid, param::appidName_s game, const param::config &config)
+void cthread::run(unsigned int appid, param::appidName_s game, const param::config &config)
 {
   unsigned int  currentCount = 0;
   bool          notify   = false;
@@ -33,6 +32,7 @@ void cthread::appidRunning(unsigned int appid, param::appidName_s game, const pa
 
   wrapper::notify notifyJob;
   notifyJob.setTimeout(config.getNotificationTimeout());
+  notifyJob.addAction(config.getActionType(), "Launch game", gameCallback, reinterpret_cast<void *>(appid));
 
   while (running)
   {

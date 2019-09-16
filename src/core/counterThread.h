@@ -6,7 +6,7 @@
 
 namespace cthread
 {
-  void appidRunning(unsigned int appid, param::appidName_s game, const param::config &config);
+  void run(unsigned int appid, param::appidName_s game, const param::config &config);
 }
 
 #endif

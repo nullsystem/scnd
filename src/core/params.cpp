@@ -21,6 +21,8 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
   strMapToVal["thresholdinterval"] = 2;           // Minutes
   strMapToVal["connectiontimeout"] = 10;          // Seconds
   strMapToVal["notificationtimeout"] = 10;        // Seconds
+  strMapToVal["actiontype"] = 0;                  // 0 = default (default), 1 = clicked
+  strMapToVal["daemonize"] = 1;                   // 0 = non-daemonize, 1 = daemonize (default)
   this->daemonize = true;
 
   wrapper::daemon::log(confFilePath);
@@ -73,11 +75,13 @@ void param::config::readConfigurationFile(const std::string &confFilePath)
     wrapper::daemon::log("Cannot find configuration file.");
   }
 
+  // Set the configuration file's settings to the program
   this->intervalMins = strMapToVal["interval"];
   this->thresholdIntervalMins = strMapToVal["thresholdinterval"];
   this->connectionTimeout = strMapToVal["connectiontimeout"];
   this->notificationTimeout = strMapToVal["notificationtimeout"];
-  this->daemonize = true;
+  this->actionType = strMapToVal["actiontype"];
+  this->daemonize = strMapToVal["daemonize"];
 }
 
 param::config::config()
@@ -113,6 +117,19 @@ unsigned int param::config::getConnectionTimeout() const
 unsigned int param::config::getNotificationTimeout() const
 {
   return this->notificationTimeout;
+}
+
+std::string_view param::config::getActionType() const
+{
+  switch (this->actionType)
+  {
+  case 0:
+    return "default";
+  case 1:
+    return "clicked";
+  default:
+    return "default";
+  }
 }
 
 param::appidNameMap param::config::getAppidMap() const
@@ -159,6 +176,9 @@ bool param::config::setArg(std::string &arg)
       break;
     case 'n':
       this->notificationTimeout = val;
+      break;
+    case 'a':
+      this->actionType = val;
       break;
     default:
       std::cerr << "ERROR: '" << arg[1] << "' not found.\n";
