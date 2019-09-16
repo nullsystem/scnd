@@ -10,6 +10,7 @@ SteamCountsNotifyD is released under a free software license (MIT)
 Minimal dependencies needed:
 * [libcurl](https://curl.haxx.se/libcurl/) - For downloading
 * [libnotify](https://developer.gnome.org/libnotify/) - For notification
+
 Optional:
 * [systemd](https://freedesktop.org/wiki/Software/systemd/)
 
