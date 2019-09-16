@@ -2,11 +2,10 @@
  * steamcountsnotifyd
  *
  * Steam counter notiifcation daemon
- * version Pre-Alpha 2019-09-11
+ * version Alpha v0.0.2 - 2019-09-16
  *
  * TODO:
  *  Per-server notification
- *  Click to load game
  */
 
 #include <iostream>
@@ -23,12 +22,16 @@
 #include "wrapper/daemon.h"
 #include "wrapper/notify.h"
 
+static GMainLoop *loop;
+
 int main(int argc, char **argv)
 {
   std::deque<std::string> args = tool::toArgs(argc, argv);
   args.pop_front();     // Program execution name not needed
   param::config config;
   bool          running = config.setFromArgs(args);
+
+  loop = g_main_loop_new(nullptr, FALSE); 
 
   // If help or version message not used (normal execution)
   if (running)
@@ -45,8 +48,10 @@ int main(int argc, char **argv)
 
     for (const auto &[appid, game] : config.getAppidMap())
     {
-      appidThreadVector.emplace_back(std::thread(std::function(cthread::appidRunning), appid, game, config));
+      appidThreadVector.emplace_back(std::thread(std::function(cthread::run), appid, game, config));
     }
+
+    g_main_loop_run(loop);
 
     // Join thread if joinable
     for (std::thread &thread : appidThreadVector)

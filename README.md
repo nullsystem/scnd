@@ -1,6 +1,8 @@
 # steamcountsnotifyd
 SteamCountsNotifyD is a multithreaded Linux daemon written in C++17 that notifies you when your selected games gets some player activity
 
+Current release: v0.0.2 - Alpha
+
 ## License
 SteamCountsNotifyD is released under a free software license (MIT)
 
@@ -40,20 +42,32 @@ Optional:
 
 ## Configuration
 * Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config`
+* You can just copy over the `config/conf_example` over to that configuration place
+### Parameters
+CLI | Name | Description
+---|---|---
+`-i` | `interval` | How long in minutes to delay between each player count fetch.
+`-t` | `thresholdinterval` | When the threshold's achieved, what interval gets extended to.
+`-c` | `connectiontimeout` | How long in seconds the connection stay puts.
+`-n` | `notifytimeout` | How long in seconds the notification stays shown.
+`-a` | `actiontype` | Which type of clickable notification should use: 0 - default, 1 - button
+`-d` | `daemonize` | Defaults to daemonize, 0 to disable daemonization
 ### Example
 ```
 interval 1
 thresholdinterval 2
 connectiontimeout 10
 notifytimeout 10
+actiontype 1
 
 newappid 244630 "NEOTOKYO" 0
 newappid 282440 "Quake Live" 100
 ```
+### systemd
+* Use the systemd daemon as under user control, more information: [systemd/User - ArchWiki](https://wiki.archlinux.org/index.php/systemd/User)
 
 ## TODO (Possible future features)
 * Per server notification
-* Click to load up game
 * Windows port
 * Better documentation and comments
 * Making it work with systemd properly
@@ -61,12 +75,15 @@ newappid 282440 "Quake Live" 100
 * Support runit and openrc also, sysvinit won't be however
 
 ## Releases
-### 0.0.2 Alpha release (Not final)
+### 0.0.2 Alpha
 * counts to count (grammar fix)
-* systemd service file available
-* fixed paramters not passing through command line and used
-* non-daemonize mode added
-### 0.0.1 Alpha release
+* systemd service file available, but buggy at the moment (need `restart` after a `start`)
+* fixed parameters not passing through command line and used
+* non-daemonize mode added - paramter: `-n=0`; configuration: `daemonize 0`
+* Added the ability to launch the game (`default` or `clicked` options available)
+  * Added `actiontype` to configuration and command-line paramter
+  * 0 = default, 1 = clicked
+### 0.0.1 Alpha
 * First release
 * Basic daemon implementation implemented
 
