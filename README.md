@@ -76,9 +76,10 @@ newappid 282440 "Quake Live" 100
 * Support runit and openrc also, sysvinit won't be however
 
 ## Releases
-### v0.0.3 Alpha
+### v0.0.3 Alpha (Not final)
 * Notification hint set to "resident", meaning the game launcher is clickable even if after the notification goes away
   * However only usable if only "default" (default anyway) is set
+* Notifies that the daemon started up
 ### v0.0.2 Alpha
 * counts to count (grammar fix)
 * systemd service file available, but buggy at the moment (need `restart` after a `start`)
