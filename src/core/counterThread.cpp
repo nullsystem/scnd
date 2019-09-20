@@ -10,7 +10,7 @@
 #include "wrapper/notify.h"
 
 // Called once clicked
-// Requires GMainLoop
+// Requires GMainLoop to work
 void gameCallback(NotifyNotification * /*notify*/, char * /*action*/, gpointer data)
 {
   unsigned int appid = static_cast<unsigned int>(reinterpret_cast<std::uintptr_t>(data));
@@ -30,9 +30,11 @@ void cthread::run(unsigned int appid, param::appidName_s game, const param::conf
 
   curlJob.setTimeout(config.getConnectionTimeout());
 
+  // Notification initialization and setup
   wrapper::notify notifyJob;
   notifyJob.setTimeout(config.getNotificationTimeout());
   notifyJob.addAction(config.getActionType(), "Launch game", gameCallback, reinterpret_cast<void *>(appid));
+  notifyJob.setHint("resident", g_variant_new_boolean(TRUE));
 
   while (running)
   {

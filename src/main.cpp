@@ -13,6 +13,7 @@
 #include <deque>
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include "core/counterThread.h"
 #include "core/params.h"
@@ -42,6 +43,13 @@ int main(int argc, char **argv)
       wrapper::daemon::init();
     }
     wrapper::notify::init("steamcountsnotifyd");
+
+    // Notify that the daemon started up
+    {
+      wrapper::notify startUpNotify("steamcountsnotifyd", "Started up");
+      startUpNotify.setTimeout(5);
+      startUpNotify.show();
+    }
 
     // Initialise and run threads for each appid/game 
     std::vector<std::thread> appidThreadVector;
