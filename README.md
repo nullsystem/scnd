@@ -4,7 +4,7 @@ SteamCountsNotifyD is a multithreaded Linux daemon written in C++17 that notifie
 Current release: v0.0.2 - Alpha
 
 ## License
-SteamCountsNotifyD is released under a free software license (MIT)
+SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
 
 ## Dependencies
 Minimal dependencies needed:
