@@ -76,7 +76,10 @@ newappid 282440 "Quake Live" 100
 * Support runit and openrc also, sysvinit won't be however
 
 ## Releases
-### 0.0.2 Alpha
+### v0.0.3 Alpha
+* Notification hint set to "resident", meaning the game launcher is clickable even if after the notification goes away
+  * However only usable if only "default" (default anyway) is set
+### v0.0.2 Alpha
 * counts to count (grammar fix)
 * systemd service file available, but buggy at the moment (need `restart` after a `start`)
 * fixed parameters not passing through command line and used
@@ -84,7 +87,7 @@ newappid 282440 "Quake Live" 100
 * Added the ability to launch the game (`default` or `clicked` options available)
   * Added `actiontype` to configuration and command-line paramter
   * 0 = default, 1 = clicked
-### 0.0.1 Alpha
+### v0.0.1 Alpha
 * First release
 * Basic daemon implementation implemented
 
