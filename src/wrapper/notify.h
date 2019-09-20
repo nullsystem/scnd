@@ -26,6 +26,7 @@ namespace wrapper
     void setTimeout(unsigned int timeout);
     void addAction(std::string_view action, std::string_view label, NotifyActionCallback callback, gpointer user_data = nullptr, GFreeFunc free_func = nullptr);
     void update(std::string_view summary = "", std::string_view body = "", std::string_view icon = "dialog-information");
+    void setHint(std::string_view key, GVariant *value);
   };
 }
 

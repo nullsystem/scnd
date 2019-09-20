@@ -40,3 +40,8 @@ void wrapper::notify::update(std::string_view summary, std::string_view body, st
 {
   notify_notification_update(this->notification, summary.data(), body.data(), icon.data());
 }
+
+void wrapper::notify::setHint(std::string_view key, GVariant *value)
+{
+  notify_notification_set_hint(this->notification, key.data(), value);
+}
