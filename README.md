@@ -1,5 +1,5 @@
 # steamcountsnotifyd
-SteamCountsNotifyD is a multithreaded Linux daemon written in C++17 that notifies you when your selected games gets some player activity
+SteamCountsNotifyD is a multithreaded notification daemon written in Rust that notifies you when your selected games gets some player activity
 
 Current release: v0.0.2 - Alpha
 
@@ -7,43 +7,25 @@ Current release: v0.0.2 - Alpha
 SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
 
 ## Dependencies
-Minimal dependencies needed:
-* [libcurl](https://curl.haxx.se/libcurl/) - For downloading
-* [libnotify](https://developer.gnome.org/libnotify/) - For notification
-
-Optional:
-* [systemd](https://freedesktop.org/wiki/Software/systemd/)
 
 ## Requirements to build
-* [meson](https://mesonbuild.com/) - To generate ninja file compile/install script
-* [ninja](https://ninja-build.org/) - To compile/install the project
-* C++17 capable compiler
-  * [GCC](https://gcc.gnu.org/) - Recommends 9.2 or 8.3
-  * [Clang](https://clang.llvm.org/)
-### C++ Requirements
-* C++11 for `std::thread`
-* C++11 for `std::function`
-* C++17 for `std::filesystem`
-* C++17 for cleaner for loop over `std::pair`
+* [rust](https://www.rust-lang.org/)
 
 ## Instructions
 ### Compile
 * `cd steamcountsnotifyd`
-* `meson build && cd build`
-* `ninja`
+* `cargo build`
 ### Install
-* `cd steamcountsnotifyd/build/`
-* `ninja install` - use `sudo` if necessary
+* `cargo install`
 ### Uninstall
-* `cd steamcountsnotifyd/build/`
-* `ninja uninstall` - use `sudo` if necessary
+* `cargo uninstall`
 
 ## Usage
 * Refer to `steamcountsnotifyd -h`
 
 ## Configuration
-* Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config`
-* You can just copy over the `config/conf_example` over to that configuration place
+* Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config.toml`
+* Program should automatically generate the configuration file if not available
 ### Parameters
 CLI | Name | Description
 ---|---|---
@@ -55,15 +37,23 @@ CLI | Name | Description
 `-d` | `daemonize` | Defaults to daemonize, 0 to disable daemonization
 ### Example
 ```
-interval 1
-thresholdinterval 2
-connectiontimeout 10
-notifytimeout 10
-actiontype 1
+interval = 1
+threshold_interval = 2
+connection_timeout = 10
+notify_timeout = 10
+action_type = 1
 
-newappid 244630 "NEOTOKYO" 0
-newappid 282440 "Quake Live" 100
+[[games]]
+appid = 244630
+name = "NEOTOKYO"
+threshold = 0
+
+[[games]]
+appid = 282440
+name = "Quake Live"
+threshold = 100
 ```
+
 ### systemd
 * Use the systemd daemon as under user control, more information: [systemd/User - ArchWiki](https://wiki.archlinux.org/index.php/systemd/User)
 
@@ -76,7 +66,9 @@ newappid 282440 "Quake Live" 100
 * Support runit and openrc also, sysvinit won't be however
 
 ## Releases
-### v0.0.3 Alpha (Not final)
+### v0.0.3 Alpha (Rust Rewrite)
+* Re-written to Rust
+### v0.0.3 Alpha
 * Notification hint set to "resident", meaning the game launcher is clickable even if after the notification goes away
   * However only usable if only "default" (default anyway) is set
 * Notifies that the daemon started up

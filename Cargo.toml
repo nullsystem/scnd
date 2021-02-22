@@ -1,0 +1,11 @@
+[package]
+name = "steamcountsnotifyd"
+version = "0.1.0"
+authors = ["marttcw <mtcw@disroot.org>"]
+edition = "2018"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5.8"
+dirs-next = "2.0.0"
+
