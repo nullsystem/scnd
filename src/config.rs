@@ -1,6 +1,6 @@
+use crate::cli;
 use serde::{Deserialize, Serialize};
 use std::default::Default;
-use crate::cli;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
@@ -52,7 +52,7 @@ impl Config {
         return toml::to_string(self).unwrap();
     }
 
-    pub fn from_opts(&mut self, opts: cli::Opts) {
+    pub fn from_opts(&mut self, opts: &cli::Opts) {
         self.interval = opts.interval;
         self.threshold_interval = opts.threshold_interval;
         self.connection_timeout = opts.connection_timeout;
@@ -60,4 +60,3 @@ impl Config {
         self.action_type = opts.action_type;
     }
 }
-
