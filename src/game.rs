@@ -1,6 +1,6 @@
 use crate::{config, notify};
+use std::{thread, time};
 
-#[tokio::main]
 pub async fn req_then_notify(game: &config::ConfigGame, notify_timeout: u32) -> Result<(), Box<dyn std::error::Error>> {
     let resp = reqwest::get(&format!(
         "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={appid}",
@@ -22,3 +22,16 @@ pub async fn req_then_notify(game: &config::ConfigGame, notify_timeout: u32) -> 
 
     Ok(())
 }
+
+pub async fn main_loop(cfg: &config::Config) {
+    loop {
+        for game in &cfg.games {
+            match req_then_notify(&game, cfg.notify_timeout).await {
+                Err(why) => println!("ERROR: {}: {}", &game.name, why),
+                Ok(_) => (),
+            };
+        }
+        thread::sleep(time::Duration::from_secs(60 * cfg.interval as u64));
+    }
+}
+

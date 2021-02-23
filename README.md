@@ -1,5 +1,5 @@
 # steamcountsnotifyd
-SteamCountsNotifyD is a multithreaded notification daemon written in Rust that notifies you when your selected games gets some player activity
+SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
 Current release: v0.0.2 - Alpha
 
@@ -30,10 +30,10 @@ SteamCountsNotifyD is released under a the [GNU General Public License v3.0](htt
 CLI | Name | Description
 ---|---|---
 `-i` | `interval` | How long in minutes to delay between each player count fetch.
-`-t` | `thresholdinterval` | When the threshold's achieved, what interval gets extended to.
-`-c` | `connectiontimeout` | How long in seconds the connection stay puts.
-`-n` | `notifytimeout` | How long in seconds the notification stays shown.
-`-a` | `actiontype` | Which type of clickable notification should use: 0 - default, 1 - button
+`-t` | `threshold_interval` | When the threshold's achieved, what interval gets extended to.
+`-c` | `connection_timeout` | How long in seconds the connection stay puts.
+`-n` | `notify_timeout` | How long in seconds the notification stays shown.
+`-a` | `action_type` | Which type of clickable notification should use: 0 - default, 1 - button
 `-d` | `daemonize` | Defaults to daemonize, 0 to disable daemonization
 `-g` | `generate` | Generates configuration file at default directory 
 ### Example
