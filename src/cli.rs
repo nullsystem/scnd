@@ -7,6 +7,10 @@ pub struct Opts {
     #[clap(short, long)]
     pub daemonize: bool,
 
+    /// Generate default configuration file (if not available)
+    #[clap(long)]
+    pub generate_config: bool,
+
     /// How long in minutes to delay between each player count fetch
     #[clap(short, default_value = "1")]
     pub interval: u32,
@@ -31,4 +35,3 @@ pub struct Opts {
 pub fn parse() -> Opts {
     return Opts::parse();
 }
-

@@ -1,18 +1,18 @@
-mod config;
-mod notify;
 mod cli;
+mod config;
+mod game;
+mod notify;
 
-use std::fs::File;
+use std::fs::{create_dir, File};
 use std::io::prelude::*;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let opts: cli::Opts = cli::parse();
     //println!("{:#?}", opts);
 
     let mut cfg: config::Config = Default::default();
-    cfg.from_opts(opts);
+    cfg.from_opts(&opts);
 
-    // Read configuration file (if found)
     if let Some(cfgdir) = dirs_next::config_dir() {
         let mut cfgfilepath = cfgdir;
         cfgfilepath.push("steamcountsnotifyd");
@@ -22,6 +22,11 @@ fn main() {
         let display = cfgfilepath.display();
 
         if cfgfilepath.exists() {
+            if opts.generate_config {
+                println!("NOTICE: File already exists. Did nothing.");
+                return Ok(());
+            }
+
             let mut file = match File::open(&cfgfilepath) {
                 Err(why) => panic!("couldn't open {}: {}", display, why),
                 Ok(file) => file,
@@ -32,28 +37,30 @@ fn main() {
                 Err(why) => panic!("couldn't read {}: {}", display, why),
                 Ok(_) => cfg.from_toml_str(&file_as_str),
             }
+        } else if opts.generate_config {
+            let mut cfgfiledir = cfgfilepath.clone();
+            cfgfiledir.pop();
+            create_dir(&cfgfiledir)?;
+
+            match File::create(&cfgfilepath) {
+                Err(why) => panic!("couldn't write to {}: {}", display, why),
+                Ok(mut file) => {
+                    file.write_all(cfg.to_toml_str().as_bytes())?;
+                    println!("Generated configuration file in: {}", display);
+                    return Ok(());
+                }
+            };
         } else {
-            println!("Configuration file not found, using defaults.");
+            println!("NOTICE: Configuration file not found. Using defaults.");
         }
     }
 
-    println!(
-        "Cfg: {} {} {} {} {}",
-        cfg.interval,
-        cfg.threshold_interval,
-        cfg.connection_timeout,
-        cfg.notify_timeout,
-        cfg.action_type
-    );
-
     for game in &cfg.games {
-        println!("{}: {} {}", game.name, game.appid, game.threshold);
+        match game::req_then_notify(&game, cfg.notify_timeout) {
+            Err(why) => println!("ERROR: {}: {}", &game.name, why),
+            Ok(_) => (),
+        };
     }
 
-    match notify::new("Testing", "Testing 123", cfg.notify_timeout) {
-        Err(why) => println!("cannot notify: {}", why),
-        Ok(_) => (),
-    }
-
-    println!("{}", cfg.to_toml_str());
+    Ok(())
 }
