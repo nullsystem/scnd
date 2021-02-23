@@ -35,6 +35,7 @@ CLI | Name | Description
 `-n` | `notifytimeout` | How long in seconds the notification stays shown.
 `-a` | `actiontype` | Which type of clickable notification should use: 0 - default, 1 - button
 `-d` | `daemonize` | Defaults to daemonize, 0 to disable daemonization
+`-g` | `generate` | Generates configuration file at default directory 
 ### Example
 ```
 interval = 1
