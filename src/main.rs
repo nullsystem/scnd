@@ -5,8 +5,10 @@ mod notify;
 
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
+use futures::executor::block_on;
 
-fn main() -> std::io::Result<()> {
+#[tokio::main]
+async fn main() -> std::io::Result<()> {
     let opts: cli::Opts = cli::parse();
     //println!("{:#?}", opts);
 
@@ -55,12 +57,7 @@ fn main() -> std::io::Result<()> {
         }
     }
 
-    for game in &cfg.games {
-        match game::req_then_notify(&game, cfg.notify_timeout) {
-            Err(why) => println!("ERROR: {}: {}", &game.name, why),
-            Ok(_) => (),
-        };
-    }
+    block_on(game::main_loop(&cfg));
 
     Ok(())
 }
