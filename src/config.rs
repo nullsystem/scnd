@@ -19,6 +19,12 @@ pub struct ConfigGame {
     pub threshold: u32,
 }
 
+#[derive(Clone)]
+pub enum ActionType {
+    Click,
+    Button,
+}
+
 impl Default for Config {
     fn default() -> Self {
         Self {
@@ -58,5 +64,13 @@ impl Config {
         self.connection_timeout = opts.connection_timeout;
         self.notify_timeout = opts.notify_timeout;
         self.action_type = opts.action_type;
+    }
+
+    pub fn get_action_type(&self) -> ActionType {
+        match self.action_type {
+            0 => ActionType::Click,
+            1 => ActionType::Button,
+            _ => ActionType::Button,
+        }
     }
 }

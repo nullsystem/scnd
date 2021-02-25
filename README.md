@@ -25,7 +25,7 @@ SteamCountsNotifyD is released under a the [GNU General Public License v3.0](htt
 
 ## Configuration
 * Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config.toml`
-* Program should automatically generate the configuration file if not available
+* Program will generate the configuration file if user requested via `--generate-config` and is not available
 ### Parameters
 CLI | Name | Description
 ---|---|---
@@ -33,8 +33,8 @@ CLI | Name | Description
 `-t` | `threshold_interval` | When the threshold's achieved, what interval gets extended to.
 `-c` | `connection_timeout` | How long in seconds the connection stay puts.
 `-n` | `notify_timeout` | How long in seconds the notification stays shown.
-`-a` | `action_type` | Which type of clickable notification should use: 0 - default, 1 - button
-`-d` | `daemonize` | Defaults to daemonize, 0 to disable daemonization
+`-a` | `action_type` | Which type of clickable notification should use: 0 - click, 1 - button
+`-d` | `daemonize` | This flag makes the program daemonize
 `-g` | `generate` | Generates configuration file at default directory 
 ### Example
 ```
@@ -68,7 +68,10 @@ threshold = 100
 
 ## Releases
 ### v0.0.3 Alpha (Rust Rewrite)
-* Re-written to Rust
+* 2021-02-25: Feature parity with previous C++ v0.0.2 Alpha version
+  * NOTE: Daemon is there but counter notification not working and CLI flag different/switched
+  * Non-daemon is by default
+* 2021-02-22: Initial rewrite to Rust
 ### v0.0.3 Alpha
 * Notification hint set to "resident", meaning the game launcher is clickable even if after the notification goes away
   * However only usable if only "default" (default anyway) is set
