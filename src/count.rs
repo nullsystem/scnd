@@ -3,10 +3,12 @@ use futures::future::join_all;
 use std::{thread, time};
 use tokio::task;
 
-pub async fn main_loop(cfg: &config::Config) {
+pub async fn main_loop(cfg: &config::Config) -> Result<(), Box<dyn std::error::Error>> {
     let notify_timeout = cfg.notify_timeout.clone();
     let interval = cfg.interval.clone();
     let threshold_interval = cfg.threshold_interval.clone();
+    let connection_timeout = cfg.connection_timeout.clone();
+    let action_type = cfg.get_action_type();
 
     let mut tasks: Vec<task::JoinHandle<()>> = vec![];
 
@@ -16,10 +18,14 @@ pub async fn main_loop(cfg: &config::Config) {
                 "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={appid}",
                 appid = game.appid
             );
+        let client = reqwest::Client::builder()
+            .timeout(time::Duration::from_secs(connection_timeout as u64))
+            .build()?;
+        let action_type = action_type.clone();
 
         tasks.push(tokio::spawn(async move {
             loop {
-                match reqwest::get(&url).await {
+                match client.get(&url).send().await {
                     Ok(resp) => match resp.text().await {
                         Ok(text) => match serde_json::from_str(&text) {
                             Ok(text_json) => {
@@ -30,7 +36,8 @@ pub async fn main_loop(cfg: &config::Config) {
                                     &game.name,
                                     &format!("{} - {} Players Online", game.name, count),
                                     notify_timeout,
-                                    game.appid
+                                    game.appid,
+                                    action_type.clone()
                                 ).await {
                                     Err(why) => println!(
                                         "{} - {}: cannot notify: {}",
@@ -49,15 +56,16 @@ pub async fn main_loop(cfg: &config::Config) {
                                     thread::sleep(time::Duration::from_secs((60 * interval) as u64));
                                 }
                             }
-                            Err(why) => println!("ERROR: Cannot extract json from text - {}", why),
+                            Err(why) => eprintln!("ERROR: Cannot extract json from text - {}", why),
                         },
-                        Err(why) => println!("ERROR: Cannot get the response text - {}", why),
+                        Err(why) => eprintln!("ERROR: Cannot get the response text - {}", why),
                     },
-                    Err(why) => println!("ERROR: Cannot download appid '{}' - {}", game.appid, why),
+                    Err(why) => eprintln!("ERROR: Cannot download appid '{}' - {}", game.appid, why),
                 }
             }
         }));
     }
-
     join_all(tasks).await;
+    Ok(())
 }
+
