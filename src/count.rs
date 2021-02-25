@@ -30,7 +30,8 @@ pub async fn main_loop(cfg: &config::Config) {
                                     &game.name,
                                     &format!("{} - {} Players Online", game.name, count),
                                     notify_timeout,
-                                ) {
+                                    game.appid
+                                ).await {
                                     Err(why) => println!(
                                         "{} - {}: cannot notify: {}",
                                         game.name, game.appid, why
