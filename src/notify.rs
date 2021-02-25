@@ -26,12 +26,17 @@ pub async fn new(summary: &str, body: &str, timeout: u32, appid: u32, action_typ
             ActionType::Click => notify.action("default", "default"),
         };
 
-        notify.show()
-            .unwrap();
+        #[cfg(windows)]
+        {
+            notify.show()
+                .unwrap();
+        }
 
         #[cfg(unix)]
         {
-            notify.wait_for_action({|action|
+            notify.show()
+                .unwrap()
+                .wait_for_action({|action|
                     match action {
                         "run" | "default" => {
                             thread::spawn(move || {
