@@ -1,6 +1,6 @@
 [package]
 name = "steamcountsnotifyd"
-version = "0.0.3-a"
+version = "0.0.4-alpha"
 authors = ["marttcw <mtcw@disroot.org>"]
 edition = "2018"
 

@@ -1,6 +1,7 @@
 # steamcountsnotifyd
 SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
+Development release: v0.0.4 - Alpha
 Current release: v0.0.2 - Alpha
 
 ## License
@@ -63,8 +64,8 @@ threshold = 0
 * Use the systemd daemon as under user control, more information: [systemd/User - ArchWiki](https://wiki.archlinux.org/index.php/systemd/User)
 
 ## TODO (Possible future features)
-* Per server notification
-* Windows port
+* SOON: Per server notification
+* Improving on the Windows port
 * Better documentation and comments
 * Making it work with systemd properly
   * Support reload function
@@ -74,11 +75,14 @@ threshold = 0
 ### v0.0.4 Alpha (Rust Rewrite)
 * Using [a2s-rs](https://github.com/rumblefrog/a2s-rs) library to do Source A2S Queries
   * Can now query from each server
+* Roughly working and ported to Windows 10
+  * Notification does not implement actions/buttons - Only used for viewing counters
+  * No equivalent to daemon on Windows used yet
 * 2021-02-25: Feature parity with previous C++ v0.0.2 Alpha version
   * NOTE: Daemon is there but counter notification not working and CLI flag different/switched
   * Non-daemon is by default
 * 2021-02-22: Initial rewrite to Rust
-### v0.0.3 Alpha
+### v0.0.3 Alpha (Final C++ Version, Unreleased)
 * Notification hint set to "resident", meaning the game launcher is clickable even if after the notification goes away
   * However only usable if only "default" (default anyway) is set
 * Notifies that the daemon started up
