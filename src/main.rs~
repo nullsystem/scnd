@@ -7,8 +7,6 @@ mod server;
 use futures::executor::block_on;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
-
-#[cfg(unix)]
 use daemonize::Daemonize;
 
 #[cfg(unix)]

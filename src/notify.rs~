@@ -47,6 +47,8 @@ pub async fn new(summary: &str, body: &str, timeout: u32, appid: u32, action_typ
                 });
         }
 
+        _appid;
+
     });
 
     Ok(())
