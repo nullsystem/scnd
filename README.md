@@ -1,8 +1,8 @@
 # steamcountsnotifyd
 SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
-Development release: v0.0.4 - Alpha
-Current release: v0.0.2 - Alpha
+* Development release: v0.0.4 - Alpha
+* Current release: v0.0.2 - Alpha
 
 ## License
 SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
