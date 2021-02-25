@@ -53,6 +53,10 @@ threshold = 0
 appid = 282440
 name = "Quake Live"
 threshold = 100
+
+[[servers]]
+address = "172.107.97.234:26300"
+threshold = 0
 ```
 
 ### systemd
@@ -67,7 +71,9 @@ threshold = 100
 * Support runit and openrc also, sysvinit won't be however
 
 ## Releases
-### v0.0.3 Alpha (Rust Rewrite)
+### v0.0.4 Alpha (Rust Rewrite)
+* Using [a2s-rs](https://github.com/rumblefrog/a2s-rs) library to do Source A2S Queries
+  * Can now query from each server
 * 2021-02-25: Feature parity with previous C++ v0.0.2 Alpha version
   * NOTE: Daemon is there but counter notification not working and CLI flag different/switched
   * Non-daemon is by default

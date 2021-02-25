@@ -2,6 +2,7 @@ mod cli;
 mod config;
 mod count;
 mod notify;
+mod server;
 
 use futures::executor::block_on;
 use std::fs::{create_dir, File};
@@ -43,7 +44,10 @@ async fn main() -> std::io::Result<()> {
         } else if opts.generate_config {
             let mut cfgfiledir = cfgfilepath.clone();
             cfgfiledir.pop();
-            create_dir(&cfgfiledir)?;
+            match create_dir(&cfgfiledir) {
+                Err(_) => (),
+                Ok(_) => (),
+            };
 
             match File::create(&cfgfilepath) {
                 Err(why) => panic!("couldn't write to {}: {}", display, why),
@@ -78,6 +82,11 @@ async fn main() -> std::io::Result<()> {
             Err(why) => eprintln!("ERROR: Cannot daemonize: {}", why),
         }
     }
+
+    let info = server::get_info("172.107.97.234:26300");
+    println!("Name: {}", info.name);
+    println!("Map: {}", info.map);
+    println!("Players: {}/{}", info.players, info.max_players);
 
     match block_on(count::main_loop(&cfg)) {
         Err(_) => {
