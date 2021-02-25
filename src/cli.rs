@@ -1,7 +1,7 @@
 use clap::Clap;
 
 #[derive(Clap, Debug)]
-#[clap(version = "0.0.3 Alpha", author = "mtcw <mtcw@disroot.org>")]
+#[clap(version = "0.0.4 Alpha", author = "mtcw <mtcw@disroot.org>")]
 pub struct Opts {
     /// Run the program in daemonized/background mode
     #[clap(short, long)]
