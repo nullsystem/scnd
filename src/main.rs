@@ -1,11 +1,11 @@
 mod cli;
 mod config;
-mod game;
+mod count;
 mod notify;
 
+use futures::executor::block_on;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
-use futures::executor::block_on;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
         }
     }
 
-    block_on(game::main_loop(&cfg));
+    block_on(count::main_loop(&cfg));
 
     Ok(())
 }
