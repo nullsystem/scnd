@@ -10,12 +10,19 @@ pub struct Config {
     pub notify_timeout: u32,
     pub action_type: u32,
     pub games: Vec<ConfigGame>,
+    pub servers: Vec<ConfigServer>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ConfigGame {
     pub appid: u32,
     pub name: String,
+    pub threshold: u32,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct ConfigServer {
+    pub address: String,
     pub threshold: u32,
 }
 
@@ -43,6 +50,12 @@ impl Default for Config {
                     appid: 282440,
                     name: String::from("Quake Live"),
                     threshold: 100,
+                },
+            ],
+            servers: vec![
+                ConfigServer {
+                    address: String::from("172.107.97.234:26300"),
+                    threshold: 0,
                 },
             ],
         }
