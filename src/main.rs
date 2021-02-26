@@ -94,11 +94,6 @@ async fn main() -> std::io::Result<()> {
         daemonize();
     }
 
-    let info = server::get_info("172.107.97.234:26300");
-    println!("Name: {}", info.name);
-    println!("Map: {}", info.map);
-    println!("Players: {}/{}", info.players, info.max_players);
-
     match block_on(count::main_loop(&cfg)) {
         Err(_) => {
             eprintln!("ERROR: An error in the main loop occured.");
