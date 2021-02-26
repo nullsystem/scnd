@@ -28,14 +28,13 @@ fn daemonize() {
         Ok(_) => {
             println!("Running in daemonize mode...");
             notify::daemon_startup();
-        },
+        }
         Err(why) => eprintln!("ERROR: Cannot daemonize: {}", why),
     }
 }
 
 #[cfg(windows)]
-fn daemonize() {
-}
+fn daemonize() {}
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -102,4 +101,3 @@ async fn main() -> std::io::Result<()> {
         Ok(_) => Ok(()),
     }
 }
-
