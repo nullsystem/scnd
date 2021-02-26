@@ -2,6 +2,7 @@ use notify_rust::Notification;
 use std::process::Command;
 use std::thread;
 use crate::config::ActionType;
+use crate::server::Info;
 
 #[cfg(unix)]
 use notify_rust::Hint;
@@ -55,6 +56,24 @@ pub async fn new(summary: &str, body: &str, timeout: u32, appid: u32, action_typ
     });
 
     Ok(())
+}
+
+pub async fn server(info: &Info, timeout: u32) {
+    let summary: String = info.name.clone();
+    let body: String = format!("{}: {} - {}/{}", info.name, info.map, info.players, info.max_players);
+
+    thread::spawn(move || {
+        let mut notify = Notification::new();
+        notify.summary(&summary)
+            .body(&body)
+            .timeout((timeout * 1000) as i32);
+
+        #[cfg(unix)]
+        notify.hint(Hint::Resident(true));
+
+        notify.show()
+            .unwrap();
+    });
 }
 
 #[cfg(unix)]

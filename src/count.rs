@@ -1,4 +1,4 @@
-use crate::{config, notify};
+use crate::{config, notify, server};
 use futures::future::join_all;
 use std::{thread, time};
 use tokio::task;
@@ -32,29 +32,29 @@ pub async fn main_loop(cfg: &config::Config) -> Result<(), Box<dyn std::error::E
                                 let text_json: serde_json::Value = text_json;
                                 let count = text_json["response"]["player_count"].to_string().parse::<u32>().unwrap();
 
-                                match notify::new(
-                                    &game.name,
-                                    &format!("{} - {} Players Online", game.name, count),
-                                    notify_timeout,
-                                    game.appid,
-                                    action_type.clone()
-                                ).await {
-                                    Err(why) => println!(
-                                        "{} - {}: cannot notify: {}",
-                                        game.name, game.appid, why
-                                    ),
-                                    Ok(_) => (),
-                                }
+                                let current_interval = if count >= game.threshold {
+                                    match notify::new(
+                                        &game.name,
+                                        &format!("{} - {} Players Online", game.name, count),
+                                        notify_timeout,
+                                        game.appid,
+                                        action_type.clone()
+                                    ).await {
+                                        Err(why) => println!(
+                                            "{} - {}: cannot notify: {}",
+                                            game.name, game.appid, why
+                                        ),
+                                        Ok(_) => (),
+                                    }
 
-                                if count >= game.threshold {
-                                    println!("{} - {}: {}: Threshold made({}): Now waiting for {} mins...",
-                                        game.name, game.appid, count, game.threshold, threshold_interval);
-                                    thread::sleep(time::Duration::from_secs((60 * threshold_interval) as u64));
+                                    threshold_interval
                                 } else {
-                                    println!("{} - {}: {}: Threshold NOT made({}): Now waiting for {} mins...",
-                                        game.name, game.appid, count, game.threshold, interval);
-                                    thread::sleep(time::Duration::from_secs((60 * interval) as u64));
-                                }
+                                    interval
+                                };
+
+                                println!("{} - {}: {}/{}: Now waiting for {} mins...",
+                                    game.name, game.appid, count, game.threshold, current_interval);
+                                thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
                             }
                             Err(why) => eprintln!("ERROR: Cannot extract json from text - {}", why),
                         },
@@ -65,6 +65,28 @@ pub async fn main_loop(cfg: &config::Config) -> Result<(), Box<dyn std::error::E
             }
         }));
     }
+
+    for server in &cfg.servers {
+        let server = server.clone();
+
+        tasks.push(tokio::spawn(async move {
+            loop {
+                let info = server::get_info(&server.address);
+
+                let current_interval = if info.players >= server.threshold {
+                    notify::server(&info, notify_timeout).await;
+                    threshold_interval
+                } else {
+                    interval
+                };
+
+                println!("{} - {}/{} - Waiting for {} mins...",
+                    server.address, info.players, server.threshold, current_interval);
+                thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
+            }
+        }));
+    }
+
     join_all(tasks).await;
     Ok(())
 }
