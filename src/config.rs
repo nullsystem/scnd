@@ -52,12 +52,10 @@ impl Default for Config {
                     threshold: 100,
                 },
             ],
-            servers: vec![
-                ConfigServer {
-                    address: String::from("172.107.97.234:26300"),
-                    threshold: 0,
-                },
-            ],
+            servers: vec![ConfigServer {
+                address: String::from("172.107.97.234:26300"),
+                threshold: 0,
+            }],
         }
     }
 }
