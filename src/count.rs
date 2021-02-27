@@ -83,20 +83,27 @@ pub async fn main_loop(cfg: &config::Config) -> Result<(), Box<dyn std::error::E
 
         tasks.push(tokio::spawn(async move {
             loop {
-                let info = server::get_info(&server.address);
+                match server::get_info(&server.address) {
+                    Ok(info) => {
+                        let current_interval = if info.players >= server.threshold {
+                            notify::server(&info, notify_timeout, &server.address, action_type.clone());
+                            threshold_interval
+                        } else {
+                            interval
+                        };
 
-                let current_interval = if info.players >= server.threshold {
-                    notify::server(&info, notify_timeout, &server.address, action_type.clone()).await;
-                    threshold_interval
-                } else {
-                    interval
-                };
-
-                println!(
-                    "{} - {}/{} - Waiting for {} mins...",
-                    server.address, info.players, server.threshold, current_interval
-                );
-                thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
+                        println!(
+                            "{} - {}/{} - Waiting for {} mins...",
+                            server.address, info.players, server.threshold, current_interval
+                        );
+                        thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
+                    }
+                    Err(why) => {
+                        eprintln!("ERROR: {}", why);
+                        eprintln!("Retrying in {} mins...", interval);
+                        thread::sleep(time::Duration::from_secs((60 * interval) as u64));
+                    }
+                }
             }
         }));
     }

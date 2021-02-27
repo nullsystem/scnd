@@ -61,7 +61,7 @@ pub async fn new(
     Ok(())
 }
 
-pub async fn server(info: &Info, timeout: u32, address: &str, action_type: ActionType) {
+pub fn server(info: &Info, timeout: u32, address: &str, action_type: ActionType) {
     let summary: String = format!(
         "{} ({})",
         info.name, info.game
