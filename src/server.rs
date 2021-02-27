@@ -1,3 +1,5 @@
+use std::error::Error;
+
 #[derive(Clone)]
 pub struct Info {
     pub name: String,
@@ -7,15 +9,27 @@ pub struct Info {
     pub max_players: u32,
 }
 
-pub fn get_info(address: &str) -> Info {
-    let client = a2s::A2SClient::new().unwrap();
-    let result = client.info(address).unwrap();
-
-    return Info {
-        name: result.name,
-        map: result.map,
-        game: result.game,
-        players: result.players.to_string().parse::<u32>().unwrap(),
-        max_players: result.max_players.to_string().parse::<u32>().unwrap(),
-    };
+pub fn get_info(address: &str) -> Result<Info, Box<dyn Error>> {
+    match a2s::A2SClient::new() {
+        Ok(client) => {
+            match client.info(address) {
+                Ok(result) => {
+                    Ok(Info {
+                        name: result.name,
+                        map: result.map,
+                        game: result.game,
+                        players: result.players.to_string().parse::<u32>().unwrap(),
+                        max_players: result.max_players.to_string().parse::<u32>().unwrap(),
+                    })
+                }
+                Err(why) => {
+                    return Err(format!("server::get_info ERROR: {}", why).into());
+                }
+            }
+        }
+        Err(why) => {
+            return Err(format!("server::get_info ERROR: {}", why).into());
+        }
+    }
 }
+
