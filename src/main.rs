@@ -8,34 +8,6 @@ use futures::executor::block_on;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
 
-#[cfg(unix)]
-use daemonize::Daemonize;
-
-#[cfg(unix)]
-fn daemonize() {
-    let stdout = File::create("/tmp/steamcountsnotifyd.out").unwrap();
-    let stderr = File::create("/tmp/steamcountsnotifyd.err").unwrap();
-
-    let daemonize = Daemonize::new()
-        .pid_file("/tmp/steamcountsnotifyd.pid")
-        .chown_pid_file(true)
-        .working_directory("/tmp")
-        .umask(0o777)
-        .stdout(stdout)
-        .stderr(stderr);
-
-    match daemonize.start() {
-        Ok(_) => {
-            println!("Running in daemonize mode...");
-            notify::daemon_startup();
-        }
-        Err(why) => eprintln!("ERROR: Cannot daemonize: {}", why),
-    }
-}
-
-#[cfg(windows)]
-fn daemonize() {}
-
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
     let opts: cli::Opts = cli::parse();
@@ -89,10 +61,6 @@ async fn main() -> std::io::Result<()> {
         }
     }
 
-    if opts.daemonize {
-        daemonize();
-    }
-
     match block_on(count::main_loop(&cfg)) {
         Err(_) => {
             eprintln!("ERROR: An error in the main loop occured.");
@@ -101,3 +69,4 @@ async fn main() -> std::io::Result<()> {
         Ok(_) => Ok(()),
     }
 }
+

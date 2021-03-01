@@ -20,6 +20,3 @@ tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 a2s = { git = "https://github.com/rumblefrog/a2s-rs.git" }
 
-[target.'cfg(unix)'.dependencies]
-daemonize = "0.4.1"
-

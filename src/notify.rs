@@ -109,12 +109,3 @@ pub fn server(info: &Info, timeout: u32, address: &str, action_type: ActionType)
     });
 }
 
-#[cfg(unix)]
-pub fn daemon_startup() {
-    Notification::new()
-        .summary("steamcountsnotifyd")
-        .body("steamcountsnotifyd daemon started up")
-        .timeout(5000)
-        .show()
-        .unwrap();
-}
