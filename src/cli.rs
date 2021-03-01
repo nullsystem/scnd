@@ -3,10 +3,6 @@ use clap::Clap;
 #[derive(Clap, Debug)]
 #[clap(version = "0.0.4 Alpha", author = "mtcw <mtcw@disroot.org>")]
 pub struct Opts {
-    /// Run the program in daemonized/background mode
-    #[clap(short, long)]
-    pub daemonize: bool,
-
     /// Generate default configuration file (if not available)
     #[clap(long)]
     pub generate_config: bool,

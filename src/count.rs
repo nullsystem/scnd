@@ -109,5 +109,7 @@ pub async fn main_loop(cfg: &config::Config) -> Result<(), Box<dyn std::error::E
     }
 
     join_all(tasks).await;
+
     Ok(())
 }
+
