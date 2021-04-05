@@ -61,7 +61,7 @@ async fn main() -> std::io::Result<()> {
         }
     }
 
-    match block_on(count::main_loop(&cfg)) {
+    match block_on(count::main_loop(&cfg, opts.single_check)) {
         Err(_) => {
             eprintln!("ERROR: An error in the main loop occured.");
             Ok(())
