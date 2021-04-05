@@ -7,6 +7,10 @@ pub struct Opts {
     #[clap(long)]
     pub generate_config: bool,
 
+    /// Just check and print the counters to the terminal once
+    #[clap(short, long)]
+    pub single_check: bool,
+
     /// How long in minutes to delay between each player count fetch
     #[clap(short, default_value = "1")]
     pub interval: u32,

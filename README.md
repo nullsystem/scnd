@@ -75,6 +75,10 @@ threshold = 0
   * EX: Give interval for each game/server
 
 ## Releases
+### v0.0.5 Alpha
+* 2021-04-05: CLI Single Check `-s, --single-check`
+  * Can use the tool as just a single use CLI tool
+  * Just check and print the counters to the terminal once
 ### v0.0.4 Alpha (First Version of Rust Rewrite)
 * 2021-03-01: Daemon option and forking/daemonization process removed
 * Using [a2s-rs](https://github.com/rumblefrog/a2s-rs) library to do Source A2S Queries
