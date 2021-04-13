@@ -1,6 +1,6 @@
 [package]
 name = "steamcountsnotifyd"
-version = "0.0.4-alpha"
+version = "0.0.5-alpha"
 authors = ["marttcw <mtcw@disroot.org>"]
 edition = "2018"
 description = "Notification daemon that notifies you when your selected game(s) and/or server(s) gets some player activity"

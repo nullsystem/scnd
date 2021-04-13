@@ -23,12 +23,12 @@ pub fn get_info(address: &str) -> Result<Info, Box<dyn Error>> {
                     })
                 }
                 Err(why) => {
-                    return Err(format!("server::get_info ERROR: {}", why).into());
+                    return Err(format!("server::get_info ERROR (info): {} | Address: {}", why, address).into());
                 }
             }
         }
         Err(why) => {
-            return Err(format!("server::get_info ERROR: {}", why).into());
+            return Err(format!("server::get_info ERROR (new): {} | Address: {}", why, address).into());
         }
     }
 }

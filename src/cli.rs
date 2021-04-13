@@ -1,7 +1,7 @@
 use clap::Clap;
 
 #[derive(Clap, Debug)]
-#[clap(version = "0.0.4 Alpha", author = "mtcw <mtcw@disroot.org>")]
+#[clap(version = "0.0.5 Alpha", author = "mtcw")]
 pub struct Opts {
     /// Generate default configuration file (if not available)
     #[clap(long)]
@@ -10,6 +10,10 @@ pub struct Opts {
     /// Just check and print the counters to the terminal once
     #[clap(short, long)]
     pub single_check: bool,
+
+    /// Ignore the thresholds
+    #[clap(long)]
+    pub ignore_thresholds: bool,
 
     /// How long in minutes to delay between each player count fetch
     #[clap(short, default_value = "1")]

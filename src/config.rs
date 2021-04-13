@@ -11,6 +11,9 @@ pub struct Config {
     pub action_type: u32,
     pub games: Vec<ConfigGame>,
     pub servers: Vec<ConfigServer>,
+
+    #[serde(skip)]
+    pub ignore_thresholds: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -40,6 +43,7 @@ impl Default for Config {
             connection_timeout: 10,
             notify_timeout: 10,
             action_type: 1,
+            ignore_thresholds: false,
             games: vec![
                 ConfigGame {
                     appid: 244630,
@@ -62,7 +66,9 @@ impl Default for Config {
 
 impl Config {
     pub fn from_toml_str(&mut self, s: &str) {
+        let tmp_ignore_thresholds = self.ignore_thresholds;
         *self = toml::from_str(s).unwrap();
+        self.ignore_thresholds = tmp_ignore_thresholds;
     }
 
     pub fn to_toml_str(&self) -> String {
@@ -75,6 +81,7 @@ impl Config {
         self.connection_timeout = opts.connection_timeout;
         self.notify_timeout = opts.notify_timeout;
         self.action_type = opts.action_type;
+        self.ignore_thresholds = opts.ignore_thresholds;
     }
 
     pub fn get_action_type(&self) -> ActionType {
