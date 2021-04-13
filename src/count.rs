@@ -49,9 +49,9 @@ pub async fn main_loop(cfg: &config::Config, single_check: bool) -> Result<(), B
 fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check: bool) {
     match server::get_info(&server.address) {
         Ok(info) => {
-            let current_interval = if info.players >= server.threshold {
+            let current_interval = if info.players >= server.threshold || cfg.ignore_thresholds {
                 if single_check {
-                    println!("{} ({}): {} - {}/{} | steam://connect/{}",
+                    println!("SERVER: {} ({}): {} - {}/{} | steam://connect/{}",
                         info.name,
                         info.game,
                         info.map,
@@ -105,9 +105,9 @@ async fn game_count_get(cfg: &config::Config, game: &config::ConfigGame, single_
                         .parse::<u32>()
                         .unwrap();
 
-                    let current_interval = if count >= game.threshold {
+                    let current_interval = if count >= game.threshold || cfg.ignore_thresholds {
                         if single_check {
-                            println!("{} - {} Players Online", game.name, count);
+                            println!("GAME:   {} - {} Players Online", game.name, count);
                         } else {
                             match notify::new(
                                 &game.name,
