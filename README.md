@@ -1,8 +1,8 @@
 # steamcountsnotifyd
 SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
-* Current release: v0.0.4 - Alpha
-* (In-Development) Next release: v0.0.5 - Alpha
+* Current release: v0.0.5 - Alpha
+* (In-Development) Next release: v0.0.6 - Alpha
 
 ## License
 SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
@@ -29,15 +29,6 @@ SteamCountsNotifyD is released under a the [GNU General Public License v3.0](htt
 * Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config.toml`
 * Program will generate the configuration file if user requested via `--generate-config` and is not available
 
-### Parameters
-CLI | Name | Description
----|---|---
-`-i` | `interval` | How long in minutes to delay between each player count fetch.
-`-t` | `threshold_interval` | When the threshold's achieved, what interval gets extended to.
-`-c` | `connection_timeout` | How long in seconds the connection stay puts.
-`-n` | `notify_timeout` | How long in seconds the notification stays shown.
-`-a` | `action_type` | Which type of clickable notification should use: 0 - click, 1 - button
-
 ### Example
 ```
 interval = 1
@@ -58,6 +49,7 @@ threshold = 100
 
 [[servers]]
 address = "172.107.97.234:26300"
+name = "Example Server"
 threshold = 0
 ```
 
@@ -76,6 +68,10 @@ threshold = 0
 
 ## Releases
 ### v0.0.5 Alpha
+* 2021-04-24: Custom server name
+  * Added in the new `name` field under `servers`
+  * Empty `name` string will use the server's given name
+  * Non-empty `name` string will use this string instead
 * 2021-04-13: Ignore threshold: `--ignore-thresholds`
   * Ignores the threshold limits and just outputs the counters regardless
   * Useful with the CLI Single check
