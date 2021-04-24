@@ -27,6 +27,9 @@ pub struct ConfigGame {
 pub struct ConfigServer {
     pub address: String,
     pub threshold: u32,
+
+    #[serde(default)]
+    pub name: String,
 }
 
 #[derive(Clone)]
@@ -58,6 +61,7 @@ impl Default for Config {
             ],
             servers: vec![ConfigServer {
                 address: String::from("172.107.97.234:26300"),
+                name: String::from(""),
                 threshold: 0,
             }],
         }

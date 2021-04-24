@@ -50,9 +50,15 @@ fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check:
     match server::get_info(&server.address) {
         Ok(info) => {
             let current_interval = if info.players >= server.threshold || cfg.ignore_thresholds {
+                let display_name = if server.name == "" {
+                    &info.name
+                } else {
+                    &server.name
+                };
+
                 if single_check {
                     println!("SERVER: {} ({}): {} - {}/{} | steam://connect/{}",
-                        info.name,
+                        display_name,
                         info.game,
                         info.map,
                         info.players,
@@ -60,7 +66,7 @@ fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check:
                         &server.address
                     );
                 } else {
-                    notify::server(&info, cfg.notify_timeout, &server.address, cfg.get_action_type());
+                    notify::server(&info, cfg.notify_timeout, display_name, &server.address, cfg.get_action_type());
                 }
                 cfg.threshold_interval
             } else {

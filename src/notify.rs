@@ -61,14 +61,14 @@ pub async fn new(
     Ok(())
 }
 
-pub fn server(info: &Info, timeout: u32, address: &str, action_type: ActionType) {
+pub fn server(info: &Info, timeout: u32, display_name: &str, address: &str, action_type: ActionType) {
     let summary: String = format!(
         "{} ({})",
-        info.name, info.game
+        display_name, info.game
     );
     let body: String = format!(
         "{} ({}): {} - {}/{}",
-        info.name, info.game, info.map, info.players, info.max_players
+        display_name, info.game, info.map, info.players, info.max_players
     );
 
     let address: String = address.into();
