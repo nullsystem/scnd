@@ -1,12 +1,12 @@
 [package]
 name = "steamcountsnotifyd"
-version = "0.0.5-alpha"
+version = "0.0.5"
 authors = ["mtcw99 <15316579+mtcw99@users.noreply.github.com>"]
 edition = "2018"
 description = "Notification daemon that notifies you when your selected game(s) and/or server(s) gets some player activity"
 readme = "README.md"
 repository = "https://github.com/mtcw99/steamcountsnotifyd"
-license = "GPL-3.0-or-later"
+license = "GPL-3.0"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

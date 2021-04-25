@@ -1,9 +1,10 @@
 use crate::config::ActionType;
 use crate::server::Info;
 use notify_rust::Notification;
-use std::process::Command;
 use std::thread;
 
+#[cfg(unix)]
+use std::process::Command;
 #[cfg(unix)]
 use notify_rust::Hint;
 
@@ -11,7 +12,7 @@ pub async fn new(
     summary: &str,
     body: &str,
     timeout: u32,
-    appid: u32,
+    _appid: u32,
     action_type: ActionType,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let summary: String = summary.into();
@@ -46,7 +47,7 @@ pub async fn new(
                     "run" | "default" => {
                         thread::spawn(move || {
                             Command::new("steam")
-                                .arg(format!("steam://rungameid/{}", appid))
+                                .arg(format!("steam://rungameid/{}", _appid))
                                 .spawn()
                                 .expect("Cannot launch steam game");
                         });
@@ -71,7 +72,7 @@ pub fn server(info: &Info, timeout: u32, display_name: &str, address: &str, acti
         display_name, info.game, info.map, info.players, info.max_players
     );
 
-    let address: String = address.into();
+    let _address: String = address.into();
 
     thread::spawn(move || {
         let mut notify = Notification::new();
@@ -97,7 +98,7 @@ pub fn server(info: &Info, timeout: u32, display_name: &str, address: &str, acti
                 "run" | "default" => {
                     thread::spawn(move || {
                         Command::new("steam")
-                            .arg(format!("steam://connect/{}", address))
+                            .arg(format!("steam://connect/{}", _address))
                             .spawn()
                             .expect("Cannot launch steam server");
                     });
