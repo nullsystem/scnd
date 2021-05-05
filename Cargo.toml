@@ -19,4 +19,5 @@ reqwest = { version = "0.11", features = ["blocking", "json"] }
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 a2s = { git = "https://github.com/rumblefrog/a2s-rs.git" }
+msq = "0.1"
 

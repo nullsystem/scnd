@@ -1,9 +1,13 @@
 use crate::{config, notify, server};
 use futures::future::join_all;
+use msq::{Filter, MSQClient, Region};
 use std::{thread, time};
 use tokio::task;
 
-pub async fn main_loop(cfg: &config::Config, single_check: bool) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn main_loop(
+    cfg: &config::Config,
+    single_check: bool,
+) -> Result<(), Box<dyn std::error::Error>> {
     let cfg = cfg.clone();
     let mut tasks: Vec<task::JoinHandle<()>> = vec![];
 
@@ -13,11 +17,12 @@ pub async fn main_loop(cfg: &config::Config, single_check: bool) -> Result<(), B
 
         tasks.push(tokio::spawn(async move {
             loop {
+                //match master_game_count_get(&cfg, &game, single_check).await {
                 match game_count_get(&cfg, &game, single_check).await {
                     Ok(_) => (),
                     Err(why) => {
                         eprintln!("{}", why);
-                    },
+                    }
                 }
 
                 if single_check {
@@ -57,7 +62,8 @@ fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check:
                 };
 
                 if single_check {
-                    println!("SERVER: {} ({}): {} - {}/{} | steam://connect/{}",
+                    println!(
+                        "SERVER: {} ({}): {} - {}/{} | steam://connect/{}",
                         display_name,
                         info.game,
                         info.map,
@@ -66,7 +72,13 @@ fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check:
                         &server.address
                     );
                 } else {
-                    notify::server(&info, cfg.notify_timeout, display_name, &server.address, cfg.get_action_type());
+                    notify::server(
+                        &info,
+                        cfg.notify_timeout,
+                        display_name,
+                        &server.address,
+                        cfg.get_action_type(),
+                    );
                 }
                 cfg.threshold_interval
             } else {
@@ -91,15 +103,19 @@ fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check:
     }
 }
 
-async fn game_count_get(cfg: &config::Config, game: &config::ConfigGame, single_check: bool) -> Result<(), Box<dyn std::error::Error>> {
+async fn game_count_get(
+    cfg: &config::Config,
+    game: &config::ConfigGame,
+    single_check: bool,
+) -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::builder()
         .timeout(time::Duration::from_secs(cfg.connection_timeout as u64))
         .build()?;
 
     let url = format!(
-            "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={appid}",
-            appid = game.appid
-        );
+        "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={appid}",
+        appid = game.appid
+    );
 
     match client.get(&url).send().await {
         Ok(resp) => match resp.text().await {
@@ -142,9 +158,7 @@ async fn game_count_get(cfg: &config::Config, game: &config::ConfigGame, single_
                             "{} - {}: {}/{}: Now waiting for {} mins...",
                             game.name, game.appid, count, game.threshold, current_interval
                         );
-                        thread::sleep(time::Duration::from_secs(
-                            (60 * current_interval) as u64,
-                        ));
+                        thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
                     }
                 }
                 Err(why) => eprintln!("ERROR: Cannot extract json from text - {}", why),
@@ -159,4 +173,38 @@ async fn game_count_get(cfg: &config::Config, game: &config::ConfigGame, single_
     Ok(())
 }
 
+async fn master_game_count_get(
+    cfg: &config::Config,
+    game: &config::ConfigGame,
+    single_check: bool,
+) -> Result<(), std::io::Error> {
+    let mut client = MSQClient::new().await?;
+    client.connect("hl2master.steampowered.com:27011").await?;
+    client.max_servers_on_query(32);
+    let servers = client
+        .query(Region::All, Filter::new().appid(game.appid))
+        .await?;
+    println!("Queries for appid {}: {}", game.appid, servers.len());
+    let mut player_counter = 0;
+    for server in &servers {
+        match server::get_info(server) {
+            Ok(info) => {
+                println!(
+                    "{} | {} | {}/{} ({})",
+                    info.name, info.map, info.players, info.max_players, info.bots
+                );
+                player_counter += info.players;
+            }
+            Err(why) => {
+                eprintln!("ERROR: {}", why);
+            }
+        }
+    }
+    println!("Total players: {}", player_counter);
 
+    if !single_check {
+        thread::sleep(time::Duration::from_secs((60 * cfg.interval) as u64));
+    }
+
+    Ok(())
+}

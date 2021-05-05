@@ -62,11 +62,14 @@ pub async fn new(
     Ok(())
 }
 
-pub fn server(info: &Info, timeout: u32, display_name: &str, address: &str, action_type: ActionType) {
-    let summary: String = format!(
-        "{} ({})",
-        display_name, info.game
-    );
+pub fn server(
+    info: &Info,
+    timeout: u32,
+    display_name: &str,
+    address: &str,
+    action_type: ActionType,
+) {
+    let summary: String = format!("{} ({})", display_name, info.game);
     let body: String = format!(
         "{} ({}): {} - {}/{}",
         display_name, info.game, info.map, info.players, info.max_players
@@ -109,4 +112,3 @@ pub fn server(info: &Info, timeout: u32, display_name: &str, address: &str, acti
         });
     });
 }
-

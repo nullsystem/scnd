@@ -69,4 +69,3 @@ async fn main() -> std::io::Result<()> {
         Ok(_) => Ok(()),
     }
 }
-
