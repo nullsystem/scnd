@@ -2,15 +2,14 @@
 SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
 * Current release: v0.0.5 - Alpha
-* (In-Development) Next release: v0.0.6 - Alpha
+* (In-Development) Next release: v0.6.0 - Alpha
 
 ## License
 SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
 
 ## Dependencies
-* serde, serde\_json, toml, dirs-next, notify-rust, clap, reqwest, tokio, futures, a2s
-  * All apart from a2s are available on [crates.io](https://crates.io/)
-  * a2s: [a2s-rs repo](https://github.com/rumblefrog/a2s-rs)
+* serde, serde\_json, toml, dirs-next, notify-rust, clap, reqwest, tokio, futures, a2s, msq
+  * All are available on [crates.io](https://crates.io/)
 
 ## Requirements to build
 * [Rust](https://www.rust-lang.org/)
@@ -67,6 +66,10 @@ threshold = 0
   * EX: Give interval for each game/server
 
 ## Releases
+### v0.6.0 Alpha
+* Change how version numbering used, moved from 0.0.X to 0.X.0
+* 2021-05-05: [msq](https://github.com/mtcw99/msq-rs) library pulled in
+
 ### v0.0.5 Alpha
 * 2021-04-24: Custom server name
   * Added in the new `name` field under `servers`

@@ -1,6 +1,6 @@
 [package]
 name = "steamcountsnotifyd"
-version = "0.0.5"
+version = "0.6.0"
 authors = ["mtcw99 <15316579+mtcw99@users.noreply.github.com>"]
 edition = "2018"
 description = "Notification daemon that notifies you when your selected game(s) and/or server(s) gets some player activity"
@@ -18,6 +18,6 @@ clap = "3.0.0-beta.2"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
-a2s = { git = "https://github.com/rumblefrog/a2s-rs.git" }
+a2s = "0.2.3"
 msq = "0.1"
 
