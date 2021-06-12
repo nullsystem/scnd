@@ -10,9 +10,9 @@ pub struct Info {
     pub bots: u32,
 }
 
-pub fn get_info(address: &str) -> Result<Info, Box<dyn Error>> {
-    match a2s::A2SClient::new() {
-        Ok(client) => match client.info(address) {
+pub async fn get_info(address: &str) -> Result<Info, Box<dyn Error>> {
+    match a2s::A2SClient::new().await {
+        Ok(client) => match client.info(address).await {
             Ok(result) => Ok(Info {
                 name: result.name,
                 map: result.map,

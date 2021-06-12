@@ -11,39 +11,73 @@ pub async fn main_loop(
     let cfg = cfg.clone();
     let mut tasks: Vec<task::JoinHandle<()>> = vec![];
 
-    for game in &cfg.games {
-        let game = game.clone();
-        let cfg = cfg.clone();
+    match &cfg.games {
+        Some(games) => {
+            for game in games {
+                let game = game.clone();
+                let cfg = cfg.clone();
 
-        tasks.push(tokio::spawn(async move {
-            loop {
-                //match master_game_count_get(&cfg, &game, single_check).await {
-                match game_count_get(&cfg, &game, single_check).await {
-                    Ok(_) => (),
-                    Err(why) => {
-                        eprintln!("{}", why);
+                tasks.push(tokio::spawn(async move {
+                    loop {
+                        match game_count_get(&cfg, &game, single_check).await {
+                            Ok(_) => (),
+                            Err(why) => {
+                                eprintln!("{}", why);
+                            }
+                        }
+
+                        if single_check {
+                            break;
+                        }
                     }
-                }
-
-                if single_check {
-                    break;
-                }
+                }));
             }
-        }));
+        },
+        None => (),
     }
 
-    for server in &cfg.servers {
-        let cfg = cfg.clone();
-        let server = server.clone();
-        tasks.push(tokio::spawn(async move {
-            loop {
-                server_get(&cfg, &server, single_check);
+    match &cfg.games_servers {
+        Some(games_servers) => {
+            for game in games_servers {
+                let game = game.clone();
+                let cfg = cfg.clone();
 
-                if single_check {
-                    break;
-                }
+                tasks.push(tokio::spawn(async move {
+                    loop {
+                        match master_game_count_get(&cfg, &game, single_check).await {
+                            Ok (_) => (),
+                            Err(why) => {
+                                eprintln!("{}", why);
+                            }
+                        }
+
+                        if single_check {
+                            break;
+                        }
+                    }
+                }));
             }
-        }));
+        },
+        None => (),
+    }
+
+    match &cfg.servers {
+        Some(servers) => {
+            for server in servers {
+                let cfg = cfg.clone();
+                let server = server.clone();
+                tasks.push(tokio::spawn(async move {
+                    loop {
+                        server_get(&cfg, &server, single_check).await;
+
+                        if single_check {
+                            break;
+                        }
+                    }
+                }));
+            }
+        },
+        None => (),
     }
 
     join_all(tasks).await;
@@ -51,8 +85,8 @@ pub async fn main_loop(
     Ok(())
 }
 
-fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check: bool) {
-    match server::get_info(&server.address) {
+async fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_check: bool) {
+    match server::get_info(&server.address).await {
         Ok(info) => {
             let current_interval = if info.players >= server.threshold || cfg.ignore_thresholds {
                 let display_name = if server.name == "" {
@@ -184,27 +218,62 @@ async fn master_game_count_get(
     let servers = client
         .query(Region::All, Filter::new().appid(game.appid))
         .await?;
-    println!("Queries for appid {}: {}", game.appid, servers.len());
     let mut player_counter = 0;
+    let mut servers_info: Vec<server::Info> = vec![];
     for server in &servers {
-        match server::get_info(server) {
+        match server::get_info(server).await {
             Ok(info) => {
-                println!(
-                    "{} | {} | {}/{} ({})",
-                    info.name, info.map, info.players, info.max_players, info.bots
-                );
                 player_counter += info.players;
+                servers_info.push(info);
             }
             Err(why) => {
                 eprintln!("ERROR: {}", why);
             }
         }
     }
-    println!("Total players: {}", player_counter);
 
-    if !single_check {
+    if single_check {
+        println!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len());
+
+        for info in servers_info {
+            if info.players > game.threshold {
+                println!(
+                    "{} | {} | {}/{} ({})",
+                    info.name, info.map, info.players, info.max_players, info.bots
+                );
+            }
+        }
+    } else {
+        let mut body_info = String::new();
+
+        for info in servers_info {
+            if info.players > game.threshold {
+                body_info += &format!(
+                    "{} | {} | {}/{} ({})\n",
+                    info.name, info.map, info.players, info.max_players, info.bots
+                );
+            }
+        }
+
+        match notify::new(
+            &format!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len()),
+            &body_info,
+            cfg.notify_timeout,
+            game.appid,
+            cfg.get_action_type(),
+        )
+        .await
+        {
+            Err(why) => println!(
+                "{} - {}: cannot notify: {}",
+                game.name, game.appid, why
+            ),
+            Ok(_) => (),
+        }
+
         thread::sleep(time::Duration::from_secs((60 * cfg.interval) as u64));
     }
 
     Ok(())
 }
+

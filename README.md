@@ -50,6 +50,11 @@ threshold = 100
 address = "172.107.97.234:26300"
 name = "Example Server"
 threshold = 0
+
+[[games_servers]]
+appid = 244630
+name = "NEOTOKYO"
+threshold = 1
 ```
 
 ### systemd

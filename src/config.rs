@@ -9,8 +9,9 @@ pub struct Config {
     pub connection_timeout: u32,
     pub notify_timeout: u32,
     pub action_type: u32,
-    pub games: Vec<ConfigGame>,
-    pub servers: Vec<ConfigServer>,
+    pub games: Option<Vec<ConfigGame>>,
+    pub servers: Option<Vec<ConfigServer>>,
+    pub games_servers: Option<Vec<ConfigGame>>,
 
     #[serde(skip)]
     pub ignore_thresholds: bool,
@@ -47,7 +48,7 @@ impl Default for Config {
             notify_timeout: 10,
             action_type: 1,
             ignore_thresholds: false,
-            games: vec![
+            games: Some(vec![
                 ConfigGame {
                     appid: 244630,
                     name: String::from("NEOTOKYO"),
@@ -58,12 +59,17 @@ impl Default for Config {
                     name: String::from("Quake Live"),
                     threshold: 100,
                 },
-            ],
-            servers: vec![ConfigServer {
+            ]),
+            servers: Some(vec![ConfigServer {
                 address: String::from("172.107.97.234:26300"),
                 name: String::from(""),
                 threshold: 0,
-            }],
+            }]),
+            games_servers: Some(vec![ConfigGame {
+                appid: 244630,
+                name: String::from("NEOTOKYO"),
+                threshold: 0,
+            }]),
         }
     }
 }

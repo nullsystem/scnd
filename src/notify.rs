@@ -4,9 +4,9 @@ use notify_rust::Notification;
 use std::thread;
 
 #[cfg(unix)]
-use std::process::Command;
-#[cfg(unix)]
 use notify_rust::Hint;
+#[cfg(unix)]
+use std::process::Command;
 
 pub async fn new(
     summary: &str,
