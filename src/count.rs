@@ -209,7 +209,7 @@ async fn game_count_get(
 
 async fn master_game_count_get(
     cfg: &config::Config,
-    game: &config::ConfigGame,
+    game: &config::ConfigGameServer,
     single_check: bool,
 ) -> Result<(), std::io::Error> {
     let mut client = MSQClient::new().await?;
@@ -233,45 +233,57 @@ async fn master_game_count_get(
     }
 
     if single_check {
-        println!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len());
+        if player_counter >= game.threshold_game || cfg.ignore_thresholds {
+            println!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len());
 
-        for info in servers_info {
-            if info.players > game.threshold {
-                println!(
-                    "{} | {} | {}/{} ({})",
-                    info.name, info.map, info.players, info.max_players, info.bots
-                );
+            for info in servers_info {
+                if info.players >= game.threshold_server || (cfg.ignore_thresholds && info.players > 0) {
+                    println!(
+                        "{} | {} | {}/{} ({})",
+                        info.name, info.map, info.players, info.max_players, info.bots
+                    );
+                }
             }
         }
     } else {
-        let mut body_info = String::new();
+        if player_counter >= game.threshold_game || cfg.ignore_thresholds {
+            let mut body_info = String::new();
 
-        for info in servers_info {
-            if info.players > game.threshold {
-                body_info += &format!(
-                    "{} | {} | {}/{} ({})\n",
-                    info.name, info.map, info.players, info.max_players, info.bots
-                );
+            for info in servers_info {
+                if info.players >= game.threshold_server || (cfg.ignore_thresholds && info.players > 0) {
+                    body_info += &format!(
+                        "{} | {} | {}/{} ({})\n",
+                        info.name, info.map, info.players, info.max_players, info.bots
+                    );
+                }
+            }
+
+            match notify::new(
+                &format!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len()),
+                &body_info,
+                cfg.notify_timeout,
+                game.appid,
+                cfg.get_action_type(),
+            )
+            .await
+            {
+                Err(why) => println!(
+                    "{} - {}: cannot notify: {}",
+                    game.name, game.appid, why
+                ),
+                Ok(_) => (),
             }
         }
 
-        match notify::new(
-            &format!("{} - {} Players Online (Queries: {})", game.name, player_counter, servers.len()),
-            &body_info,
-            cfg.notify_timeout,
-            game.appid,
-            cfg.get_action_type(),
-        )
-        .await
-        {
-            Err(why) => println!(
-                "{} - {}: cannot notify: {}",
-                game.name, game.appid, why
-            ),
-            Ok(_) => (),
-        }
+        let current_interval = if player_counter >= game.threshold_game {
+            cfg.threshold_interval
+        } else {
+            cfg.interval
+        };
 
-        thread::sleep(time::Duration::from_secs((60 * cfg.interval) as u64));
+        println!("GAMESERVER: {}: {}/{} ({}): Now waiting for {} mins...",
+            game.name, player_counter, game.threshold_game, servers.len(), current_interval);
+        thread::sleep(time::Duration::from_secs((60 * current_interval) as u64));
     }
 
     Ok(())

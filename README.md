@@ -54,7 +54,8 @@ threshold = 0
 [[games_servers]]
 appid = 244630
 name = "NEOTOKYO"
-threshold = 1
+threshold_game = 2
+threshold_server = 1
 ```
 
 ### systemd

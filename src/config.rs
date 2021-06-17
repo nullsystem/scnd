@@ -11,7 +11,7 @@ pub struct Config {
     pub action_type: u32,
     pub games: Option<Vec<ConfigGame>>,
     pub servers: Option<Vec<ConfigServer>>,
-    pub games_servers: Option<Vec<ConfigGame>>,
+    pub games_servers: Option<Vec<ConfigGameServer>>,
 
     #[serde(skip)]
     pub ignore_thresholds: bool,
@@ -31,6 +31,14 @@ pub struct ConfigServer {
 
     #[serde(default)]
     pub name: String,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct ConfigGameServer {
+    pub appid: u32,
+    pub name: String,
+    pub threshold_game: u32,
+    pub threshold_server: u32,
 }
 
 #[derive(Clone)]
@@ -65,10 +73,11 @@ impl Default for Config {
                 name: String::from(""),
                 threshold: 0,
             }]),
-            games_servers: Some(vec![ConfigGame {
+            games_servers: Some(vec![ConfigGameServer {
                 appid: 244630,
                 name: String::from("NEOTOKYO"),
-                threshold: 0,
+                threshold_game: 2,
+                threshold_server: 1,
             }]),
         }
     }
