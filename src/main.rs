@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
 
     if let Some(cfgdir) = dirs_next::config_dir() {
         let mut cfgfilepath = cfgdir;
-        cfgfilepath.push("steamcountsnotifyd");
+        cfgfilepath.push("scnd");
         cfgfilepath.push("config");
         cfgfilepath.set_extension("toml");
 

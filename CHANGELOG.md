@@ -5,6 +5,7 @@
   * `interval` and `threshold_interval` now available per `games`/`servers`/`games_servers`
   * Change to a more permissive license (GPLv3 -> ISC)
   * Removed Windows WiX toolset files
+  * Renamed to scnd
 * 2021-05-05: msq and version numbering
   * [msq](https://github.com/nullsystem/msq-rs) library pulled in
   * Change how version numbering used, moved from 0.0.X to 0.X.0

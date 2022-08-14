@@ -1,11 +1,11 @@
-# steamcountsnotifyd
-SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
+# scnd - Steam (Games) Counter Notification Daemon
+scnd is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
 * Current release: v0.0.5 - Alpha
 * (In-Development) Next release: v0.6.0 - Beta
 
 ## License
-SteamCountsNotifyD is released under the [ISC License](https://www.isc.org/licenses/).
+scnd is released under the [ISC License](https://www.isc.org/licenses/).
 
 ## Requirements to build
 * [Rust](https://www.rust-lang.org/)
@@ -20,10 +20,10 @@ SteamCountsNotifyD is released under the [ISC License](https://www.isc.org/licen
 * `cargo uninstall`
 
 ## Usage
-* Refer to `steamcountsnotifyd -h`
+* Refer to `scnd -h`
 
 ## Configuration
-* Uses xdg directory: `$HOME/.config/steamcountsnotifyd/config.toml`
+* Uses xdg directory: `$HOME/.config/scnd/config.toml`
 * Program will generate the configuration file if user requested via `--generate-config` and is not available
 
 ### Example

@@ -3,7 +3,7 @@ Description=Steam Counts Notification Daemon
 
 [Service]
 Type=forking
-ExecStart=/usr/local/sbin/steamcountsnotifyd
+ExecStart=/usr/local/sbin/scnd
 Restart=on-failure
 
 [Install]
