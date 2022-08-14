@@ -5,7 +5,7 @@ SteamCountsNotifyD is a notification daemon written in Rust that notifies you wh
 * (In-Development) Next release: v0.6.0 - Beta
 
 ## License
-SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
+SteamCountsNotifyD is released under a the [ISC License](https://www.isc.org/licenses/) a permissive FOSS license.
 
 ## Dependencies
 * serde, serde\_json, toml, dirs-next, notify-rust, clap, reqwest, tokio, futures, a2s, msq
@@ -68,9 +68,11 @@ threshold_server = 1
 ### v0.6.0 Beta
 * Change how version numbering used, moved from 0.0.X to 0.X.0
 * 2021-05-05: [msq](https://github.com/nullsystem/msq-rs) library pulled in
-* 2022-08-14: Updates and improvements
+* 2022-08-14: Updates, changes, and improvements
   * Update dependencies
   * `interval` and `threshold_interval` now available per `games`/`servers`/`games_servers`
+  * Change to a more permissive license (GPLv3 -> ISC)
+  * Removed Windows WiX toolset files
 
 ### v0.0.5 Alpha
 * 2021-04-24: Custom server name
