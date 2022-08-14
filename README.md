@@ -14,6 +14,7 @@ SteamCountsNotifyD is released under a the [GNU General Public License v3.0](htt
 ## Requirements to build
 * [Rust](https://www.rust-lang.org/)
   * Just install with the instructions straight from the site. The compiler and cargo should be provided by default.
+  * You can also use your distro's package manager also providing they have Rust available.
 
 ## Instructions
 ### Compile and Install
@@ -37,23 +38,18 @@ notify_timeout = 10
 action_type = 1
 
 [[games]]
-appid = 244630
-name = "NEOTOKYO"
-threshold = 0
-
-[[games]]
-appid = 282440
-name = "Quake Live"
+appid = 1234
+name = "Example Game"
 threshold = 100
 
 [[servers]]
-address = "172.107.97.234:26300"
+address = "0.0.0.0:1234"
 name = "Example Server"
 threshold = 0
 
 [[games_servers]]
-appid = 244630
-name = "NEOTOKYO"
+appid = 1234
+name = "Example Game"
 threshold_game = 2
 threshold_server = 1
 ```
@@ -74,7 +70,7 @@ threshold_server = 1
 ## Releases
 ### v0.6.0 Alpha
 * Change how version numbering used, moved from 0.0.X to 0.X.0
-* 2021-05-05: [msq](https://github.com/mtcw99/msq-rs) library pulled in
+* 2021-05-05: [msq](https://github.com/nullsystem/msq-rs) library pulled in
 
 ### v0.0.5 Alpha
 * 2021-04-24: Custom server name
