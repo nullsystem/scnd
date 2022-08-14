@@ -2,7 +2,7 @@ use clap::Parser;
 use clap_derive::Parser;
 
 #[derive(Parser, Debug)]
-#[clap(version = "0.6.0 Alpha", author = "nullsystem")]
+#[clap(version = "0.6.0 Beta", author = "nullsystem")]
 pub struct Opts {
     /// Generate default configuration file (if not available)
     #[clap(long)]

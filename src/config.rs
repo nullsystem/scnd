@@ -22,12 +22,16 @@ pub struct ConfigGame {
     pub appid: u32,
     pub name: String,
     pub threshold: u32,
+    pub interval: Option<u32>,
+    pub threshold_interval: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ConfigServer {
     pub address: String,
     pub threshold: u32,
+    pub interval: Option<u32>,
+    pub threshold_interval: Option<u32>,
 
     #[serde(default)]
     pub name: String,
@@ -39,6 +43,8 @@ pub struct ConfigGameServer {
     pub name: String,
     pub threshold_game: u32,
     pub threshold_server: u32,
+    pub interval: Option<u32>,
+    pub threshold_interval: Option<u32>,
 }
 
 #[derive(Clone)]
@@ -58,26 +64,27 @@ impl Default for Config {
             ignore_thresholds: false,
             games: Some(vec![
                 ConfigGame {
-                    appid: 244630,
-                    name: String::from("NEOTOKYO"),
-                    threshold: 0,
-                },
-                ConfigGame {
-                    appid: 282440,
-                    name: String::from("Quake Live"),
+                    appid: 1234,
+                    name: String::from("Example game"),
                     threshold: 100,
+                    interval: None,
+                    threshold_interval: None,
                 },
             ]),
             servers: Some(vec![ConfigServer {
-                address: String::from("172.107.97.234:26300"),
+                address: String::from("0.0.0.0:1234"),
                 name: String::from(""),
                 threshold: 0,
+                interval: None,
+                threshold_interval: None,
             }]),
             games_servers: Some(vec![ConfigGameServer {
-                appid: 244630,
-                name: String::from("NEOTOKYO"),
+                appid: 1234,
+                name: String::from("Example game"),
                 threshold_game: 2,
                 threshold_server: 1,
+                interval: None,
+                threshold_interval: None,
             }]),
         }
     }

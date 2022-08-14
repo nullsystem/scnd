@@ -2,7 +2,7 @@
 SteamCountsNotifyD is a notification daemon written in Rust that notifies you when your selected game(s) gets some player activity
 
 * Current release: v0.0.5 - Alpha
-* (In-Development) Next release: v0.6.0 - Alpha
+* (In-Development) Next release: v0.6.0 - Beta
 
 ## License
 SteamCountsNotifyD is released under a the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) a free software copyleft license.
@@ -46,6 +46,8 @@ threshold = 100
 address = "0.0.0.0:1234"
 name = "Example Server"
 threshold = 0
+interval = 5
+threshold_interval = 10
 
 [[games_servers]]
 appid = 1234
@@ -60,17 +62,15 @@ threshold_server = 1
 ## TODO
 * Edit configuration via the CLI
 * Improving on the Windows port
-* Better documentation and comments
-* Making it work with systemd properly
-  * Support reload function
 * Support runit and openrc also, sysvinit won't be however
-* Configuration: More controls can be given for per game/server
-  * EX: Give interval for each game/server
 
 ## Releases
-### v0.6.0 Alpha
+### v0.6.0 Beta
 * Change how version numbering used, moved from 0.0.X to 0.X.0
 * 2021-05-05: [msq](https://github.com/nullsystem/msq-rs) library pulled in
+* 2022-08-14: Updates and improvements
+  * Update dependencies
+  * `interval` and `threshold_interval` now available per `games`/`servers`/`games_servers`
 
 ### v0.0.5 Alpha
 * 2021-04-24: Custom server name

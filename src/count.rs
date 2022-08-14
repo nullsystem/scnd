@@ -114,9 +114,15 @@ async fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_
                         cfg.get_action_type(),
                     );
                 }
-                cfg.threshold_interval
+                match server.threshold_interval {
+                    None => cfg.threshold_interval,
+                    Some(server_threshold_interval) => server_threshold_interval,
+                }
             } else {
-                cfg.interval
+                match server.interval {
+                    None => cfg.interval,
+                    Some(server_interval) => server_interval,
+                }
             };
 
             if !single_check {
@@ -130,8 +136,13 @@ async fn server_get(cfg: &config::Config, server: &config::ConfigServer, single_
         Err(why) => {
             eprintln!("ERROR: {}", why);
             if !single_check {
-                eprintln!("Retrying in {} mins...", cfg.interval);
-                thread::sleep(time::Duration::from_secs((60 * cfg.interval) as u64));
+                let error_interval = match server.interval {
+                    None => cfg.interval,
+                    Some(server_interval) => server_interval,
+                };
+
+                eprintln!("Retrying in {} mins...", error_interval);
+                thread::sleep(time::Duration::from_secs((60 * error_interval) as u64));
             }
         }
     }
@@ -182,9 +193,16 @@ async fn game_count_get(
                             }
                         }
 
-                        cfg.threshold_interval
+
+                        match game.threshold_interval {
+                            None => cfg.threshold_interval,
+                            Some(game_threshold_interval) => game_threshold_interval,
+                        }
                     } else {
-                        cfg.interval
+                        match game.interval {
+                            None => cfg.interval,
+                            Some(game_interval) => game_interval,
+                        }
                     };
 
                     if !single_check {
@@ -276,9 +294,15 @@ async fn master_game_count_get(
         }
 
         let current_interval = if player_counter >= game.threshold_game {
-            cfg.threshold_interval
+            match game.threshold_interval {
+                None => cfg.threshold_interval,
+                Some(game_threshold_interval) => game_threshold_interval,
+            }
         } else {
-            cfg.interval
+            match game.interval {
+                None => cfg.interval,
+                Some(game_interval) => game_interval,
+            }
         };
 
         println!("GAMESERVER: {}: {}/{} ({}): Now waiting for {} mins...",
